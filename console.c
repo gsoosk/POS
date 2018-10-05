@@ -148,7 +148,8 @@ cgaputc(int c)
 
   if(c == '\n')
   {
-    for(int i = pos + 1 ; i <= numberOfShifts + pos ; i ++ )
+    int i;
+    for(i = pos + 1 ; i <= numberOfShifts + pos ; i ++ )
     {
       crt[i - 1] = crt[i];
     }
@@ -159,18 +160,26 @@ cgaputc(int c)
   }
   else if(c == LEFTARROW){
     
-    if(pos > 0) --pos;
-    // cursorPos = cursorPos--;
-    // for(int i = pos; i < crt; i++)
-    // {
-    // }
-    crt[pos+1] = crt[pos];
-    numberOfShifts ++ ;
-    // crt[pos+1] = ('s'&0xff) | 0x0700;  // black on white
+    if(pos > 0)
+    {
+      --pos;
+      crt[pos+1] = crt[pos];
+      numberOfShifts ++ ;
+    }
   } 
+  else if(c == RIGHTARROW)
+  {
+    if(pos > 0 && numberOfShifts !=0)
+    {
+      crt[pos] = crt[pos+1];
+      ++pos;
+      numberOfShifts --;
+    }
+  }
   else
   {
-    for(int i = pos+numberOfShifts ; i >= pos ; i--)
+    int i;
+    for(i = pos+numberOfShifts ; i >= pos ; i--)
     {
       crt[i+1] = crt[i];
     }

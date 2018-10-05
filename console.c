@@ -148,6 +148,7 @@ cgaputc(int c)
 
   if(c == '\n')
   {
+    numberOfShifts = 0;
     int i;
     for(i = pos + 1 ; i <= numberOfShifts + pos ; i ++ )
     {

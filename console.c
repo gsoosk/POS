@@ -132,7 +132,7 @@ panic(char *s)
 #define RIGHTARROW 229
 
 static ushort *crt = (ushort*)P2V(0xb8000);  // CGA memory
-static int numberOfShifts = 0;
+int numberOfShifts = 0;
 
 
 static void
@@ -147,25 +147,33 @@ cgaputc(int c)
   pos |= inb(CRTPORT+1);
 
   if(c == '\n')
+  {
+    for(int i = pos + 1 ; i <= numberOfShifts + pos ; i ++ )
+    {
+      crt[i - 1] = crt[i];
+    }
     pos += 80 - pos%80;
+  }
   else if(c == BACKSPACE){
     if(pos > 0) --pos;
   }
   else if(c == LEFTARROW){
-    for(int i = pos+numberOfShifts ; i >= pos ; i--)
-    {
-      
-    }
+    
     if(pos > 0) --pos;
     // cursorPos = cursorPos--;
     // for(int i = pos; i < crt; i++)
     // {
     // }
-
-    crt[pos+1] = ('s'&0xff) | 0x0700;  // black on white
+    crt[pos+1] = crt[pos];
+    numberOfShifts ++ ;
+    // crt[pos+1] = ('s'&0xff) | 0x0700;  // black on white
   } 
   else
   {
+    for(int i = pos+numberOfShifts ; i >= pos ; i--)
+    {
+      crt[i+1] = crt[i];
+    }
     crt[pos++] = (c&0xff) | 0x0700;  // black on white
   }
     

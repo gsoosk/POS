@@ -132,6 +132,8 @@ panic(char *s)
 #define RIGHTARROW 229
 
 static ushort *crt = (ushort*)P2V(0xb8000);  // CGA memory
+static int numberOfShifts = 0;
+
 
 static void
 cgaputc(int c)
@@ -150,9 +152,24 @@ cgaputc(int c)
     if(pos > 0) --pos;
   }
   else if(c == LEFTARROW){
+    for(int i = pos+numberOfShifts ; i >= pos ; i--)
+    {
+      
+    }
     if(pos > 0) --pos;
-  } else
+    // cursorPos = cursorPos--;
+    // for(int i = pos; i < crt; i++)
+    // {
+    // }
+
+    crt[pos+1] = ('s'&0xff) | 0x0700;  // black on white
+  } 
+  else
+  {
     crt[pos++] = (c&0xff) | 0x0700;  // black on white
+  }
+    
+    
 
   if(pos < 0 || pos > 25*80)
     panic("pos under/overflow");

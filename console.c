@@ -158,10 +158,13 @@ cgaputc(int c)
   }
   else if(c == BACKSPACE){
     int i;
+
     for(i = pos + 1 ; i <= numberOfShifts + pos ; i ++ )
     {
       crt[i - 1] = crt[i];
     }
+    // crt[pos + numberOfShifts] = ('\b'&0xff);
+
     if(pos > 0) --pos;
   }
   else if(c == LEFTARROW){
@@ -256,22 +259,29 @@ consoleintr(int (*getc)(void))
       }
       break;
     case C('H'): case '\x7f':  // Backspace
-      if(input.e != input.w){
+      if(input.e != input.w + numberOfShifts){
+        // int i;
+        // for(i = input.e ; i > input.e - numberOfShifts -1 ;i--)
+        // {
+        //   input.buf[i% INPUT_BUF] = input.buf[i% INPUT_BUF];
+        // }
         input.e--;
         consputc(BACKSPACE);
       }
       break;
     case LEFTARROW:
-      if(input.e != input.w){
-        input.w--;
+    // input.w = input.e;
+      if(input.e != input.w + numberOfShifts){
+        // input.w--;
         if(input.e-input.r < INPUT_BUF){
           consputc(c);
         }
       }
       break;
     case RIGHTARROW:
+      // input.w = input.e;
       if(input.e != input.w){
-        input.w++;
+        // input.w++;
         if(input.e-input.r < INPUT_BUF){
           consputc(c);
         }
@@ -283,7 +293,7 @@ consoleintr(int (*getc)(void))
         input.buf[input.e++ % INPUT_BUF] = c;
         consputc(c);
         if(c == '\n' || c == C('D') || input.e == input.r+INPUT_BUF){
-          input.e = input.e + numberOfShifts;
+
           input.w = input.e;
           wakeup(&input.r);
         }

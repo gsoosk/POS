@@ -157,6 +157,11 @@ cgaputc(int c)
     pos += 80 - pos%80;
   }
   else if(c == BACKSPACE){
+    int i;
+    for(i = pos + 1 ; i <= numberOfShifts + pos ; i ++ )
+    {
+      crt[i - 1] = crt[i];
+    }
     if(pos > 0) --pos;
   }
   else if(c == LEFTARROW){
@@ -256,12 +261,29 @@ consoleintr(int (*getc)(void))
         consputc(BACKSPACE);
       }
       break;
+    case LEFTARROW:
+      if(input.e != input.w){
+        input.w--;
+        if(input.e-input.r < INPUT_BUF){
+          consputc(c);
+        }
+      }
+      break;
+    case RIGHTARROW:
+      if(input.e != input.w){
+        input.w++;
+        if(input.e-input.r < INPUT_BUF){
+          consputc(c);
+        }
+      }
+      break;
     default:
       if(c != 0 && input.e-input.r < INPUT_BUF){
         c = (c == '\r') ? '\n' : c;
         input.buf[input.e++ % INPUT_BUF] = c;
         consputc(c);
         if(c == '\n' || c == C('D') || input.e == input.r+INPUT_BUF){
+          input.e = input.e + numberOfShifts;
           input.w = input.e;
           wakeup(&input.r);
         }

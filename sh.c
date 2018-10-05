@@ -4,9 +4,6 @@
 #include "user.h"
 #include "fcntl.h"
 
-// Library for getch
-#include <stdio.h>
-
 // Parsed command representation
 #define EXEC  1
 #define REDIR 2
@@ -138,20 +135,7 @@ getcmd(char *buf, int nbuf)
 {
   printf(2, "$ ");
   memset(buf, 0, nbuf);
-
-  int bufIndex = 0;
-  char ch;
-  while(ch = getchar() != 13)
-  {
-    buf[bufIndex] = ch;
-    bufIndex ++ ;
-    if(bufIndex > 100)
-      break;
-  }
-
-
-
-  // gets(buf, nbuf);
+  gets(buf, nbuf);
   if(buf[0] == 0) // EOF
     return -1;
   return 0;

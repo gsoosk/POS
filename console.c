@@ -132,14 +132,15 @@ panic(char *s)
 #define RIGHTARROW 229
 
 static ushort *crt = (ushort*)P2V(0xb8000);  // CGA memory
-int offsetToEnd = 0;
 
+// Use this number for figure out how much edit pointer is move
+int offsetToEnd = 0;
 
 static void
 cgaputc(int c)
 {
   int pos;
-
+  int i = 0;
   // Cursor position: col + 80*row.
   outb(CRTPORT, 14);
   pos = inb(CRTPORT+1) << 8;
@@ -148,21 +149,17 @@ cgaputc(int c)
 
   if(c == '\n')
   {
-    int i;
     for(i = pos ; i <= offsetToEnd + pos ; i++ )
-    {
       crt[i] = crt[i+1];
-    }
+
     offsetToEnd = 0 ; // initialing for next command
     pos += 80 - pos%80;
   }
   else if(c == BACKSPACE){
-    int i;
-
+   
     for(i = pos + 1 ; i <= offsetToEnd + pos ; i ++ )
-    {
       crt[i - 1] = crt[i];
-    }
+
     crt[pos + offsetToEnd] = (' '&0xff);
 
     if(pos > 0) --pos;
@@ -187,15 +184,12 @@ cgaputc(int c)
   }
   else
   {
-    int i;
     for(i = pos+offsetToEnd ; i >= pos ; i--)
     {
       crt[i+1] = crt[i];
     }
     crt[pos++] = (c&0xff) | 0x0700;  // black on white
   }
-    
-    
 
   if(pos < 0 || pos > 25*80)
     panic("pos under/overflow");
@@ -235,8 +229,8 @@ struct {
   uint r;  // Read index
   uint w;  // Write index
   uint e;  // Edit index
-  uint shifts;
 } input;
+
 int inputOffsetToEnd = 0;
 
 #define C(x)  ((x)-'@')  // Control-x
@@ -245,6 +239,7 @@ void
 consoleintr(int (*getc)(void))
 {
   int c, doprocdump = 0;
+  int i = 0;
 
   acquire(&cons.lock);
   while((c = getc()) >= 0){
@@ -262,11 +257,9 @@ consoleintr(int (*getc)(void))
       break;
     case C('H'): case '\x7f':  // Backspace
       if(input.e != input.w ){
-        int i;
         for(i = input.e - 1 ; i < input.e + inputOffsetToEnd -1 ;i++)
-        {
           input.buf[i% INPUT_BUF] = input.buf[(i+1)% INPUT_BUF];
-        }
+
         input.e--;
         consputc(BACKSPACE);
       }
@@ -296,11 +289,9 @@ consoleintr(int (*getc)(void))
           consputc(c);
         }
         else{
-          int i = 0 ;
           for(i = input.e + inputOffsetToEnd ; i >= input.e && inputOffsetToEnd!=0 ; i-- )
-          {
             input.buf[(i+1) % INPUT_BUF] = input.buf[ i % INPUT_BUF];
-          }
+            
           input.buf[input.e++ % INPUT_BUF] = c;
           consputc(c);
         }

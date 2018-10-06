@@ -199,7 +199,6 @@ cgaputc(int c)
     pos -= 80;
     memset(crt+pos, 0, sizeof(crt[0])*(24*80 - pos));
   }
-
   outb(CRTPORT, 14);
   outb(CRTPORT+1, pos>>8);
   outb(CRTPORT, 15);
@@ -291,16 +290,15 @@ consoleintr(int (*getc)(void))
         else{
           for(i = input.e + inputOffsetToEnd ; i >= input.e && inputOffsetToEnd!=0 ; i-- )
             input.buf[(i+1) % INPUT_BUF] = input.buf[ i % INPUT_BUF];
-            
+
           input.buf[input.e++ % INPUT_BUF] = c;
           consputc(c);
         }
         
         if(c == '\n' || c == C('D') || input.e == input.r+INPUT_BUF){
-          
+    
           input.w = input.e;
           inputOffsetToEnd = 0;
-          
           wakeup(&input.r);
         }
         

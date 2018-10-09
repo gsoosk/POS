@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "locale": "c",
+        "user.h": "c",
+        "ostream": "c"
+    }
+}

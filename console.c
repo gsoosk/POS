@@ -133,8 +133,13 @@ panic(char *s)
 
 static ushort *crt = (ushort*)P2V(0xb8000);  // CGA memory
 
-// Use this number for figure out how much edit pointer is move
+/* 
+Use this number to figure out offset of cursor
+position from end of input
+*/
 int offsetToEnd = 0;
+
+
 
 static void
 cgaputc(int c)
@@ -155,8 +160,8 @@ cgaputc(int c)
     offsetToEnd = 0 ; // initialing for next command
     pos += 80 - pos%80;
   }
+  
   else if(c == BACKSPACE){
-   
     for(i = pos + 1 ; i <= offsetToEnd + pos ; i ++ )
       crt[i - 1] = crt[i];
 
@@ -165,9 +170,7 @@ cgaputc(int c)
     if(pos > 0) --pos;
   }
   else if(c == LEFTARROW){
-    
-    if(pos > 0)
-    {
+    if(pos > 0){
       --pos;
       crt[pos+1] = crt[pos];
       offsetToEnd ++ ;
@@ -175,8 +178,7 @@ cgaputc(int c)
   } 
   else if(c == RIGHTARROW)
   {
-    if(pos > 0 && offsetToEnd !=0)
-    {
+    if(pos > 0 && offsetToEnd !=0){
       crt[pos] = crt[pos+1];
       ++pos;
       offsetToEnd --;
@@ -223,14 +225,15 @@ consputc(int c)
 }
 
 #define INPUT_BUF 128
+
 struct {
   char buf[INPUT_BUF];
   uint r;  // Read index
   uint w;  // Write index
   uint e;  // Edit index
 } input;
-
 int inputOffsetToEnd = 0;
+
 
 #define C(x)  ((x)-'@')  // Control-x
 

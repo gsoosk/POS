@@ -9,6 +9,7 @@ New Features
 
 * introducing contributers added to boot message.
 * moving cursor in shell added to this version.
+* sort command added. you can sort 5 numbers in arguments.
 
 
 How to use? 

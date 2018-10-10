@@ -24,7 +24,7 @@ void insertionSort(char *arr[], int n)
 int main(int argc, char *argv[]) 
 {
     if(argc != 6){
-        printf(1, "sort: enter 5 numbers please.\n");
+        printf(2, "sort: enter 5 numbers please.\n");
         exit();
     }
 
@@ -33,20 +33,20 @@ int main(int argc, char *argv[])
     for(i = 0 ; i < 5 ; i++)
         nums[i] = argv[i+1];
     insertionSort(nums, 5);
-    printf(1,"proccess id is %d \n", getpid());
+    printf(2,"proccess id is %d \n", getpid());
     int fd;
     if((fd = open("sorted.txt", O_CREATE | O_WRONLY)) < 0){
-      printf(1, "sort: cannot open file");
+      printf(2, "sort: cannot open file");
       exit();
     }
     for(i = 0 ; i < 5 ; i++)
     {
         if(write(fd, nums[i], strlen(nums[i])) != strlen(nums[i])) {
-            printf(1, "sort: write error\n");
+            printf(2, "sort: write error\n");
             exit();
         }
         if(write(fd, "\n", 1) != 1) {
-            printf(1, "sort: write error\n");
+            printf(2, "sort: write error\n");
             exit();
         }
     }

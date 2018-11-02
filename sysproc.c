@@ -128,4 +128,19 @@ sys_sort_syscalls(void){
   sort_syscalls_trap(pid);
   return 1;
   
+sys_get_count(void)
+{
+  struct proc *curproc = myproc();
+  addNewTrace(curproc -> pid, SYS_invoked_syscalls);
+  int pid, sysNum;
+  if(argint(0, &pid) < 0)
+    return -1;
+  if(argint(1, &sysNum) < 0)
+    return -1;
+  int syscallsCount = getSyscallCount(pid, sysNum);
+  if(syscallsCount != 0)
+    cprintf("~System call count in this process is %d\n", syscallsCount);
+  else
+    cprintf("~There is no systemcall for this process\n");
+  return syscallsCount;
 }

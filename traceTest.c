@@ -5,7 +5,28 @@
 
 int main(int argc, char *argv[]) 
 {
-    invoked_syscalls(1);
-    invoked_syscalls(7);
+    printf(1, "What system call do you like to test ? \n");
+    printf(1, "1.invoked_syscalls\n");
+    printf(1, "2.get_count\n");
+
+    char buf[1024];
+    read(1, buf, 1024);
+    if(atoi(buf) == 1)
+    {
+        printf(1, "enter pid : \n");
+        read(1, buf, 1024);
+        int pid = atoi(buf);
+        invoked_syscalls(pid);
+    }
+    else if(atoi(buf) == 2)
+    {
+        printf(1, "enter pid : \n");
+        read(1, buf, 1024);
+        int pid = atoi(buf);
+        printf(1, "enter syscall number : \n");
+        read(1, buf, 1024);
+        int sysNum = atoi(buf);
+        get_count(pid, sysNum);
+    }
     exit();
 }

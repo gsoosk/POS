@@ -20,19 +20,10 @@ void addNewTrace(int pid, int trapNum)
 {
     int i = 0 ;
     while (traces[pid].trap[i] != 0)
-    {
-        i ++ ;
-    }
-        
+        i++;  
     traces[pid].trap[i] = 1;
     traces[pid].trapNum[i] = trapNum;
     cmostime( &traces[pid].times[i] );
-    // cprintf ( "number of traps : %d pid is : %d trap is : %d  number : %d time : %d\n",
-    //              i,
-    //              pid,
-    //              traces[pid].trap[i],
-    //              traces[pid].trapNum[i],
-    //              traces[pid].times[i].year);
 }
 
 void showPidTraces(int pid)
@@ -87,6 +78,7 @@ char* syscallName(int syscallNum)
         case ( 21 ) : return "close";
         case ( 22 ) : return "inc_num";
         case ( 23 ) : return "invoked_syscalls";
+        case ( 24 ) : return "get_count";
         case ( 25 ) : return "sort_syscalls";
     }
     return "";
@@ -118,4 +110,14 @@ void sort_syscalls_trap(int pid)
 			}  
 		}
 	}
+int getSyscallCount(int pid, int sysNum)
+{
+    int i;
+    int num = 0;
+    for(i = 0 ; i < 200 ; i++)
+    {
+        if(traces[pid].trap[i] != 0 && traces[pid].trapNum[i] == sysNum)
+            num++;
+    }
+    return num;
 }

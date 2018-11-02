@@ -6,7 +6,7 @@
 #include "defs.h"
 #include "x86.h"
 #include "elf.h"
-
+#include "syscall.h"
 int
 exec(char *path, char **argv)
 {
@@ -18,6 +18,7 @@ exec(char *path, char **argv)
   struct proghdr ph;
   pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
+  addNewTrace(curproc -> pid, SYS_exec);
 
   begin_op();
 

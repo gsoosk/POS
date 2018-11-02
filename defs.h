@@ -197,9 +197,9 @@ void            clearpteu(pde_t *pgdir, char *uva);
 struct sysCallTraces
 {
 
-    int trap[100];
-    int trapNum[100];
-    struct rtcdate times[100];
+    int trap[200];
+    int trapNum[200];
+    struct rtcdate times[200];
 } ;
 extern struct sysCallTraces traces[100];
 

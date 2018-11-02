@@ -4,6 +4,7 @@
         "user.h": "c",
         "ostream": "c",
         "defs.h": "c",
-        "date.h": "c"
+        "date.h": "c",
+        "syscall.h": "c"
     }
 }

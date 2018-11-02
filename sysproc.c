@@ -5,6 +5,7 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
+#include "syscall.h"
 
 int
 sys_fork(void)
@@ -38,7 +39,9 @@ sys_kill(void)
 int
 sys_getpid(void)
 {
-  return myproc()->pid;
+  struct proc *curproc = myproc();
+  addNewTrace(curproc -> pid, SYS_getpid);
+  return curproc->pid;
 }
 
 int
@@ -46,7 +49,8 @@ sys_sbrk(void)
 {
   int addr;
   int n;
-
+  struct proc *curproc = myproc();
+  addNewTrace(curproc -> pid, SYS_sbrk);
   if(argint(0, &n) < 0)
     return -1;
   addr = myproc()->sz;
@@ -60,7 +64,8 @@ sys_sleep(void)
 {
   int n;
   uint ticks0;
-
+  struct proc *curproc = myproc();
+  addNewTrace(curproc -> pid, SYS_sleep);
   if(argint(0, &n) < 0)
     return -1;
   acquire(&tickslock);
@@ -82,7 +87,8 @@ int
 sys_uptime(void)
 {
   uint xticks;
-
+  struct proc *curproc = myproc();
+  addNewTrace(curproc -> pid, SYS_uptime);
   acquire(&tickslock);
   xticks = ticks;
   release(&tickslock);
@@ -93,6 +99,8 @@ int
 sys_inc_num(void)
 {
   int n;
+  struct proc *curproc = myproc();
+  addNewTrace(curproc -> pid, SYS_inc_num);
   argint(0, &n);
   cprintf("Hello World! %d \n", n);
   return 1;

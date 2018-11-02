@@ -24,6 +24,7 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int inc_num(int);
+int invoked_syscalls(int pid);
 
 // ulib.c
 int stat(const char*, struct stat*);

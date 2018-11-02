@@ -204,7 +204,9 @@ struct sysCallTraces
 extern struct sysCallTraces traces[100];
 
 void initTraces();
-
 void addNewTrace(int pid, int trapNum);
+
+void showPidTraces(int pid);
+char* syscallName(int syscallNum);
 
 #endif

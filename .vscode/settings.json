@@ -5,6 +5,7 @@
         "ostream": "c",
         "defs.h": "c",
         "date.h": "c",
-        "syscall.h": "c"
+        "syscall.h": "c",
+        "x86.h": "c"
     }
 }

@@ -105,3 +105,15 @@ sys_inc_num(void)
   cprintf("Hello World! %d \n", n);
   return 1;
 }
+
+int 
+sys_invoked_syscalls(void)
+{
+  struct proc *curproc = myproc();
+  addNewTrace(curproc -> pid, SYS_invoked_syscalls);
+  int pid;
+  if(argint(0, &pid) < 0)
+    return -1;
+  showPidTraces(pid);
+  return 1;
+}

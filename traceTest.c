@@ -5,6 +5,7 @@
 
 int main(int argc, char *argv[]) 
 {
-    write(1, "salam\n", 7);
+    invoked_syscalls(1);
+    invoked_syscalls(7);
     exit();
 }

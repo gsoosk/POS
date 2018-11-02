@@ -25,6 +25,7 @@ int sleep(int);
 int uptime(void);
 int inc_num(int);
 int invoked_syscalls(int pid);
+int get_count(int pid, int sysNum);
 
 // ulib.c
 int stat(const char*, struct stat*);

@@ -59,6 +59,7 @@ void showPidTraces(int pid)
         }
     }
 }
+
 char* syscallName(int syscallNum)
 {
     switch(syscallNum)
@@ -86,6 +87,35 @@ char* syscallName(int syscallNum)
         case ( 21 ) : return "close";
         case ( 22 ) : return "inc_num";
         case ( 23 ) : return "invoked_syscalls";
+        case ( 25 ) : return "sort_syscalls";
     }
     return "";
+}
+
+void sort_syscalls_trap(int pid)
+{
+    int i;
+    
+
+    for (int i = 0; i < 200; i++)
+	{
+		for (int j = 0; j < 200; j++)
+		{
+			if (traces[pid].trap[j] > traces[pid].trap[i])             
+			{
+				int tmp = traces[pid].trap[i];
+				traces[pid].trap[i] = traces[pid].trap[j];
+				traces[pid].trap[j] = tmp;
+                
+                tmp = traces[pid].trapNum[i];
+				traces[pid].trapNum[i] = traces[pid].trapNum[j];
+				traces[pid].trapNum[j] = tmp;
+                
+                struct rtcdate temp;
+                temp = traces[pid].times[i];
+				traces[pid].times[i] = traces[pid].times[j];
+				traces[pid].times[j] = temp;
+			}  
+		}
+	}
 }

@@ -117,3 +117,15 @@ sys_invoked_syscalls(void)
   showPidTraces(pid);
   return 1;
 }
+
+int
+sys_sort_syscalls(void){
+  struct proc *curproc = myproc();
+  addNewTrace(curproc -> pid, SYS_sort_syscalls);
+  int pid;
+  if(argint(0, &pid) < 0)
+    return -1;
+  sort_syscalls_trap(pid);
+  return 1;
+  
+}

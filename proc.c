@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "syscall.h"
 
 struct {
   struct spinlock lock;
@@ -183,6 +184,8 @@ fork(void)
   int i, pid;
   struct proc *np;
   struct proc *curproc = myproc();
+
+  addNewTrace(curproc->pid, SYS_fork);
 
   // Allocate process.
   if((np = allocproc()) == 0){

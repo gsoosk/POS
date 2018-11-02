@@ -1,3 +1,6 @@
+#ifndef DEF
+#define DEF
+#include "date.h"
 struct buf;
 struct context;
 struct file;
@@ -188,3 +191,20 @@ void            clearpteu(pde_t *pgdir, char *uva);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
+
+
+// for saving syscalls
+struct sysCallTraces
+{
+
+    int trap[100];
+    int trapNum[100];
+    struct rtcdate times[100];
+} ;
+extern struct sysCallTraces traces[100];
+
+void initTraces();
+
+void addNewTrace(int pid, int trapNum);
+
+#endif

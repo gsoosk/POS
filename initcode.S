@@ -20,7 +20,7 @@ exit:
   int $T_SYSCALL
   jmp exit
 
-# char init[] = "/init\0";
+# char inith[] = "/init\0";
 init:
   .string "/init\0"
 

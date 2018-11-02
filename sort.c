@@ -50,6 +50,6 @@ int main(int argc, char *argv[])
             exit();
         }
     }
-
+    inc_num(12);
     exit();
 }

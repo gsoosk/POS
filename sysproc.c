@@ -89,3 +89,12 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+int 
+sys_inc_num(void)
+{
+  int n;
+  argint(0, &n);
+  cprintf("Hello World! %d \n", n);
+  return 1;
+}

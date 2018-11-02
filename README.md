@@ -14,6 +14,8 @@ New Features
 ### Part 2 :
 * invoked_syscalls system call : this system call show used system calls of a process
 * get_count system call : return and show number of a specific system calls in a process 
+* sort_syscalls : sort all used systemcalls for a process by time 
+
 
 
 How to use? 

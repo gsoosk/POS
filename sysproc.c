@@ -127,7 +127,9 @@ sys_sort_syscalls(void){
     return -1;
   sort_syscalls_trap(pid);
   return 1;
-  
+}
+
+int
 sys_get_count(void)
 {
   struct proc *curproc = myproc();

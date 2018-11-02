@@ -132,9 +132,11 @@ static int (*syscalls[])(void) = {
 [SYS_close]   sys_close,
 [SYS_inc_num] sys_inc_num,
 [SYS_invoked_syscalls] sys_invoked_syscalls,
-[SYS_sort_sysclass] sys_sort_syscalls,
+[SYS_sort_syscalls] sys_sort_syscalls,
 [SYS_get_count] sys_get_count,
+};
 
+void
 syscall(void)
 {
   int num;

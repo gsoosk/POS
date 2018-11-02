@@ -86,14 +86,12 @@ char* syscallName(int syscallNum)
 
 void sort_syscalls_trap(int pid)
 {
-    int i;
-    
-
-    for (int i = 0; i < 200; i++)
+    int i , j;
+    for (i = 0; i < 200; i++)
 	{
-		for (int j = 0; j < 200; j++)
+		for (j = 0; j < 200; j++)
 		{
-			if (traces[pid].trap[j] > traces[pid].trap[i])             
+			if (traces[pid].trap[i] != 0 &&  traces[pid].trap[j] != 0 && traces[pid].trapNum[j] > traces[pid].trapNum[i])             
 			{
 				int tmp = traces[pid].trap[i];
 				traces[pid].trap[i] = traces[pid].trap[j];
@@ -110,6 +108,8 @@ void sort_syscalls_trap(int pid)
 			}  
 		}
 	}
+}
+
 int getSyscallCount(int pid, int sysNum)
 {
     int i;

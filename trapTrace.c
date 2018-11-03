@@ -13,16 +13,16 @@ void initTraces()
     int j;
     for( j = 0 ; j < 100 ; j++)
         for( i = 0 ; i < 200 ; i++)
-            traces[j].trap[i] = 0;
+            traces[j].exists[i] = 0;
    
 }
-void addNewTrace(int pid, int trapNum)
+void addNewTrace(int pid, int syscallNumber)
 {
     int i = 0 ;
-    while (traces[pid].trap[i] != 0)
+    while (traces[pid].exists[i] != 0)
         i++;  
-    traces[pid].trap[i] = 1;
-    traces[pid].trapNum[i] = trapNum;
+    traces[pid].exists[i] = 1;
+    traces[pid].syscallNumber[i] = syscallNumber;
     cmostime( &traces[pid].times[i] );
 }
 
@@ -31,11 +31,11 @@ void showPidTraces(int pid)
     int i;
     for(i = 0 ; i < 200 ; i++)
     {
-        if(traces[pid].trap[i] != 0)
+        if(traces[pid].exists[i] != 0)
         {
             cprintf("~ SystemCall %s  with trap number %d called at %d/%d/%d  %d:%d:%d\n",
-                    syscallName(traces[pid].trapNum[i]),
-                    traces[pid].trapNum[i],
+                    syscallName(traces[pid].syscallNumber[i]),
+                    traces[pid].syscallNumber[i],
                     traces[pid].times[i].year,
                     traces[pid].times[i].month,
                     traces[pid].times[i].day,
@@ -91,15 +91,15 @@ void sort_syscalls_trap(int pid)
 	{
 		for (j = 0; j < 200; j++)
 		{
-			if (traces[pid].trap[i] != 0 &&  traces[pid].trap[j] != 0 && traces[pid].trapNum[j] > traces[pid].trapNum[i])             
+			if (traces[pid].exists[i] != 0 &&  traces[pid].exists[j] != 0 && traces[pid].syscallNumber[j] > traces[pid].syscallNumber[i])             
 			{
-				int tmp = traces[pid].trap[i];
-				traces[pid].trap[i] = traces[pid].trap[j];
-				traces[pid].trap[j] = tmp;
+				int tmp = traces[pid].exists[i];
+				traces[pid].exists[i] = traces[pid].exists[j];
+				traces[pid].exists[j] = tmp;
                 
-                tmp = traces[pid].trapNum[i];
-				traces[pid].trapNum[i] = traces[pid].trapNum[j];
-				traces[pid].trapNum[j] = tmp;
+                tmp = traces[pid].syscallNumber[i];
+				traces[pid].syscallNumber[i] = traces[pid].syscallNumber[j];
+				traces[pid].syscallNumber[j] = tmp;
                 
                 struct rtcdate temp;
                 temp = traces[pid].times[i];
@@ -116,7 +116,7 @@ int getSyscallCount(int pid, int sysNum)
     int num = 0;
     for(i = 0 ; i < 200 ; i++)
     {
-        if(traces[pid].trap[i] != 0 && traces[pid].trapNum[i] == sysNum)
+        if(traces[pid].exists[i] != 0 && traces[pid].syscallNumber[i] == sysNum)
             num++;
     }
     return num;

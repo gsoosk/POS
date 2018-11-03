@@ -194,17 +194,21 @@ void            clearpteu(pde_t *pgdir, char *uva);
 
 
 // for saving syscalls
+
+// int numberOfProcesses = 0;
 struct sysCallTraces
 {
 
-    int trap[200];
-    int trapNum[200];
+    int numberOfSystemcalls;
+    int exists[200];
+    int syscallNumber[200];
+    int syscallArgs [200][3];
     struct rtcdate times[200];
 } ;
 extern struct sysCallTraces traces[100];
 
 void initTraces();
-void addNewTrace(int pid, int trapNum);
+void addNewTrace(int pid, int syscallNum);
 void showPidTraces(int pid);
 char* syscallName(int syscallNum);
 void sort_syscalls_trap(int pid);

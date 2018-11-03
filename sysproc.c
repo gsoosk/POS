@@ -40,6 +40,8 @@ int
 sys_getpid(void)
 {
   struct proc *curproc = myproc();
+  curproc->count++;
+
   addNewTrace(curproc -> pid, SYS_getpid);
   return curproc->pid;
 }
@@ -50,6 +52,7 @@ sys_sbrk(void)
   int addr;
   int n;
   struct proc *curproc = myproc();
+  curproc->count++;
   addNewTrace(curproc -> pid, SYS_sbrk);
   if(argint(0, &n) < 0)
     return -1;
@@ -65,6 +68,7 @@ sys_sleep(void)
   int n;
   uint ticks0;
   struct proc *curproc = myproc();
+  curproc->count++;
   addNewTrace(curproc -> pid, SYS_sleep);
   if(argint(0, &n) < 0)
     return -1;
@@ -88,6 +92,7 @@ sys_uptime(void)
 {
   uint xticks;
   struct proc *curproc = myproc();
+  curproc->count++;
   addNewTrace(curproc -> pid, SYS_uptime);
   acquire(&tickslock);
   xticks = ticks;
@@ -100,6 +105,7 @@ sys_inc_num(void)
 {
   int n;
   struct proc *curproc = myproc();
+  curproc->count++;
   addNewTrace(curproc -> pid, SYS_inc_num);
   argint(0, &n);
   cprintf("Hello World! %d \n", n);
@@ -110,6 +116,7 @@ int
 sys_invoked_syscalls(void)
 {
   struct proc *curproc = myproc();
+  curproc->count++;
   addNewTrace(curproc -> pid, SYS_invoked_syscalls);
   int pid;
   if(argint(0, &pid) < 0)
@@ -121,6 +128,7 @@ sys_invoked_syscalls(void)
 int
 sys_sort_syscalls(void){
   struct proc *curproc = myproc();
+  curproc->count++;
   addNewTrace(curproc -> pid, SYS_sort_syscalls);
   int pid;
   if(argint(0, &pid) < 0)
@@ -134,6 +142,7 @@ sys_get_count(void)
 {
   struct proc *curproc = myproc();
   addNewTrace(curproc -> pid, SYS_invoked_syscalls);
+  curproc->count++;
   int pid, sysNum;
   if(argint(0, &pid) < 0)
     return -1;

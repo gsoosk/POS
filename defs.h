@@ -192,6 +192,15 @@ void            clearpteu(pde_t *pgdir, char *uva);
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
 
+// for show log
+struct syscallLog
+{
+    struct rtcdate date;
+    int dateTime;
+    int syscallNumber;
+    int pid;
+} ;
+
 
 // for saving syscalls
 struct sysCallTraces
@@ -206,6 +215,7 @@ extern struct sysCallTraces traces[100];
 void initTraces();
 void addNewTrace(int pid, int trapNum);
 void showPidTraces(int pid);
+void showLogOfProcesses();
 char* syscallName(int syscallNum);
 int getSyscallCount(int pid, int sysNum);
 

@@ -56,8 +56,6 @@ fdalloc(struct file *f)
 int
 sys_dup(void)
 {
-  struct proc *curproc = myproc();
-  addNewTrace(curproc -> pid, SYS_dup);
   struct file *f;
   int fd;
 
@@ -72,8 +70,6 @@ sys_dup(void)
 int
 sys_read(void)
 {
-  struct proc *curproc = myproc();
-  addNewTrace(curproc -> pid, SYS_read);
   struct file *f;
   int n;
   char *p;
@@ -89,9 +85,7 @@ sys_write(void)
   struct file *f;
   int n;
   char *p;
-  
-  struct proc *curproc = myproc();
-  addNewTrace(curproc -> pid , SYS_write);
+
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
     return -1;
   return filewrite(f, p, n);
@@ -106,8 +100,6 @@ sys_close(void)
   if(argfd(0, &fd, &f) < 0)
     return -1;
   myproc()->ofile[fd] = 0;
-  struct proc *curproc = myproc();
-  addNewTrace(curproc -> pid, SYS_close);
   fileclose(f);
   return 0;
 }
@@ -117,8 +109,6 @@ sys_fstat(void)
 {
   struct file *f;
   struct stat *st;
-  struct proc *curproc = myproc();
-  addNewTrace(curproc -> pid, SYS_fstat);
 
   if(argfd(0, 0, &f) < 0 || argptr(1, (void*)&st, sizeof(*st)) < 0)
     return -1;
@@ -131,8 +121,6 @@ sys_link(void)
 {
   char name[DIRSIZ], *new, *old;
   struct inode *dp, *ip;
-   struct proc *curproc = myproc();
-  addNewTrace(curproc -> pid, SYS_link);
 
   if(argstr(0, &old) < 0 || argstr(1, &new) < 0)
     return -1;
@@ -197,8 +185,6 @@ isdirempty(struct inode *dp)
 int
 sys_unlink(void)
 {
-  struct proc *curproc = myproc();
-  addNewTrace(curproc -> pid, SYS_unlink);
   struct inode *ip, *dp;
   struct dirent de;
   char name[DIRSIZ], *path;
@@ -305,8 +291,6 @@ sys_open(void)
   int fd, omode;
   struct file *f;
   struct inode *ip;
-  struct proc *curproc = myproc();
-  addNewTrace(curproc -> pid, SYS_open);
 
   if(argstr(0, &path) < 0 || argint(1, &omode) < 0)
     return -1;
@@ -355,8 +339,7 @@ sys_mkdir(void)
 {
   char *path;
   struct inode *ip;
-  struct proc *curproc = myproc();
-  addNewTrace(curproc -> pid, SYS_mkdir);
+
   begin_op();
   if(argstr(0, &path) < 0 || (ip = create(path, T_DIR, 0, 0)) == 0){
     end_op();
@@ -373,8 +356,7 @@ sys_mknod(void)
   struct inode *ip;
   char *path;
   int major, minor;
-   struct proc *curproc = myproc();
-  addNewTrace(curproc -> pid, SYS_mknod);
+
   begin_op();
   if((argstr(0, &path)) < 0 ||
      argint(1, &major) < 0 ||
@@ -394,7 +376,7 @@ sys_chdir(void)
   char *path;
   struct inode *ip;
   struct proc *curproc = myproc();
-  addNewTrace(curproc -> pid, SYS_chdir);
+  
   begin_op();
   if(argstr(0, &path) < 0 || (ip = namei(path)) == 0){
     end_op();
@@ -442,8 +424,6 @@ sys_exec(void)
 int
 sys_pipe(void)
 {
-  struct proc *curproc = myproc();
-  addNewTrace(curproc -> pid, SYS_pipe);
   int *fd;
   struct file *rf, *wf;
   int fd0, fd1;

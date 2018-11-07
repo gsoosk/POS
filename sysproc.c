@@ -119,10 +119,17 @@ sys_invoked_syscalls(void)
 }
 
 int
+sys_log_syscalls(void)
+{
+  showLogOfProcesses();
+  return 1;
+}
+
+int
 sys_get_count(void)
 {
   struct proc *curproc = myproc();
-  addNewTrace(curproc -> pid, SYS_invoked_syscalls);
+  addNewTrace(curproc -> pid, SYS_get_count);
   int pid, sysNum;
   if(argint(0, &pid) < 0)
     return -1;

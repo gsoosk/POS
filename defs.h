@@ -194,18 +194,21 @@ void            clearpteu(pde_t *pgdir, char *uva);
 
 
 // for saving syscalls
-
+#define MAX_BUF_SIZE 32
+#define MAX_PID_NUMS 20
+#define MAX_SYS_CALLS 200
 // int numberOfProcesses = 0;
 struct sysCallTraces
 {
 
     int numberOfSystemcalls;
-    int exists[200];
-    int syscallNumber[200];
-    int syscallArgs [200][3];
-    struct rtcdate times[200];
+    int exists[MAX_SYS_CALLS];
+    int syscallNumber[MAX_SYS_CALLS];
+    char syscallArgs[MAX_SYS_CALLS][MAX_BUF_SIZE];
+    
+    struct rtcdate times[MAX_SYS_CALLS];
 } ;
-extern struct sysCallTraces traces[100];
+extern struct sysCallTraces traces[MAX_PID_NUMS];
 
 void initTraces();
 void addNewTrace(int pid, int syscallNum);

@@ -6,16 +6,19 @@
 #include "mmu.h"
 #include "x86.h"
 #include "syscall.h"
-struct sysCallTraces traces[100];
+struct sysCallTraces traces[MAX_PID_NUMS];
 void initTraces()
 {
     int i;
     int j;
-    for( j = 0 ; j < 100 ; j++)
-        for( i = 0 ; i < 200 ; i++)
+    for( j = 0 ; j < MAX_PID_NUMS ; j++)
+        for( i = 0 ; i < MAX_SYS_CALLS ; i++)
+        {
             traces[j].exists[i] = 0;
-   
+            strncpy(traces[j].syscallArgs[i], "", 0);
+        }  
 }
+
 void addNewTrace(int pid, int syscallNumber)
 {
     int i = 0 ;
@@ -29,7 +32,7 @@ void addNewTrace(int pid, int syscallNumber)
 void showPidTraces(int pid)
 {
     int i;
-    for(i = 0 ; i < 200 ; i++)
+    for(i = 0 ; i < MAX_SYS_CALLS ; i++)
     {
         if(traces[pid].exists[i] != 0)
         {
@@ -87,9 +90,9 @@ char* syscallName(int syscallNum)
 void sort_syscalls_trap(int pid)
 {
     int i , j;
-    for (i = 0; i < 200; i++)
+    for (i = 0; i < MAX_SYS_CALLS; i++)
 	{
-		for (j = 0; j < 200; j++)
+		for (j = 0; j < MAX_SYS_CALLS; j++)
 		{
 			if (traces[pid].exists[i] != 0 &&  traces[pid].exists[j] != 0 && traces[pid].syscallNumber[j] > traces[pid].syscallNumber[i])             
 			{
@@ -114,7 +117,7 @@ int getSyscallCount(int pid, int sysNum)
 {
     int i;
     int num = 0;
-    for(i = 0 ; i < 200 ; i++)
+    for(i = 0 ; i < MAX_SYS_CALLS ; i++)
     {
         if(traces[pid].exists[i] != 0 && traces[pid].syscallNumber[i] == sysNum)
             num++;

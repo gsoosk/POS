@@ -182,7 +182,6 @@ int getSyscallCount(int pid, int sysNum)
 {
     int i;
     int num = 0;
-    cprintf("pid %d sys %d\n", pid, sysNum);
     for(i = 0 ; i < MAX_SYS_CALLS ; i++)
     {
         if(traces[pid].exists[i] != 0 && traces[pid].syscallNumber[i] == sysNum)

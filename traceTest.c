@@ -8,6 +8,7 @@ int main(int argc, char *argv[])
     printf(1, "What system call do you like to test ? \n");
     printf(1, "1.invoked_syscalls\n");
     printf(1, "2.get_count\n");
+    printf(1 ,"3.sort_syscalls\n");
     printf(1, "4.log_syscalls\n");
 
     char buf[1024];
@@ -28,6 +29,14 @@ int main(int argc, char *argv[])
         read(1, buf, 1024);
         int sysNum = atoi(buf);
         get_count(pid, sysNum);
+    }
+    else if(atoi(buf) == 3)
+    {
+        printf(1, "enter pid : \n");
+        read(1, buf, 1024);
+        int pid = atoi(buf);
+        sort_syscalls(pid);
+        //invoked_syscalls(pid);
     }
     else if(atoi(buf) == 4)
     {

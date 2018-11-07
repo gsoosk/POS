@@ -203,20 +203,28 @@ struct syscallLog
 
 
 // for saving syscalls
+#define MAX_BUF_SIZE 32
+#define MAX_PID_NUMS 20
+#define MAX_SYS_CALLS 200
+// int numberOfProcesses = 0;
 struct sysCallTraces
 {
 
-    int trap[200];
-    int trapNum[200];
-    struct rtcdate times[200];
+    int numberOfSystemcalls;
+    int exists[MAX_SYS_CALLS];
+    int syscallNumber[MAX_SYS_CALLS];
+    char syscallArgs[MAX_SYS_CALLS][MAX_BUF_SIZE];
+    
+    struct rtcdate times[MAX_SYS_CALLS];
 } ;
-extern struct sysCallTraces traces[100];
+extern struct sysCallTraces traces[MAX_PID_NUMS];
 
 void initTraces();
-void addNewTrace(int pid, int trapNum);
+void addNewTrace(int pid, int syscallNum);
 void showPidTraces(int pid);
 void showLogOfProcesses();
 char* syscallName(int syscallNum);
+void sort_syscalls_trap(int pid);
 int getSyscallCount(int pid, int sysNum);
 
 #endif

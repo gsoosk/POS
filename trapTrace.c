@@ -7,36 +7,40 @@
 #include "x86.h"
 #include "syscall.h"
 
-struct sysCallTraces traces[100];
+struct sysCallTraces traces[MAX_PID_NUMS];
+
 void initTraces()
 {
     int i;
     int j;
-    for( j = 0 ; j < 100 ; j++)
-        for( i = 0 ; i < 200 ; i++)
-            traces[j].trap[i] = 0;
-   
+    for( j = 0 ; j < MAX_PID_NUMS ; j++)
+        for( i = 0 ; i < MAX_SYS_CALLS ; i++)
+        {
+            traces[j].exists[i] = 0;
+            strncpy(traces[j].syscallArgs[i], "", 0);
+        }  
 }
-void addNewTrace(int pid, int trapNum)
+
+void addNewTrace(int pid, int syscallNumber)
 {
     int i = 0 ;
-    while (traces[pid].trap[i] != 0)
+    while (traces[pid].exists[i] != 0)
         i++;  
-    traces[pid].trap[i] = 1;
-    traces[pid].trapNum[i] = trapNum;
+    traces[pid].exists[i] = 1;
+    traces[pid].syscallNumber[i] = syscallNumber;
     cmostime( &traces[pid].times[i] );
 }
 
 void showPidTraces(int pid)
 {
     int i;
-    for(i = 0 ; i < 200 ; i++)
+    for(i = 0 ; i < MAX_SYS_CALLS ; i++)
     {
-        if(traces[pid].trap[i] != 0)
+        if(traces[pid].exists[i] != 0)
         {
             cprintf("~ SystemCall %s  with trap number %d called at %d/%d/%d  %d:%d:%d\n",
-                    syscallName(traces[pid].trapNum[i]),
-                    traces[pid].trapNum[i],
+                    syscallName(traces[pid].syscallNumber[i]),
+                    traces[pid].syscallNumber[i],
                     traces[pid].times[i].year,
                     traces[pid].times[i].month,
                     traces[pid].times[i].day,
@@ -64,16 +68,16 @@ int timeToNumber(struct rtcdate date)
 void showLogOfProcesses()
 {
     int numberOfTraps = 0;
-    struct syscallLog logTrace[20000];
+    struct syscallLog logTrace[10000];
     int i=0, j=0;
-    for(i=0; i<100; i++) {
-        for(j=0; j<200; j++) {
-            if(!traces[i].trap[j])
+    for(i=0; i<MAX_PID_NUMS; i++) {
+        for(j=0; j<MAX_SYS_CALLS; j++) {
+            if(!traces[i].exists[j])
                 break;
             logTrace[numberOfTraps].date = traces[i].times[j];            
             logTrace[numberOfTraps].dateTime = timeToNumber(traces[i].times[j]);
             logTrace[numberOfTraps].pid = i;
-            logTrace[numberOfTraps].syscallNumber = traces[i].trapNum[j];
+            logTrace[numberOfTraps].syscallNumber = traces[i].syscallNumber[j];
             numberOfTraps++;
         }
     }
@@ -102,9 +106,8 @@ void showLogOfProcesses()
     
     for(i = 0; i < numberOfTraps; i++)
     {
-        cprintf("~ SystemCall %s %d called by process %d at %d/%d/%d  %d:%d:%d\n",
+        cprintf("~ SystemCall %s called by process %d at %d/%d/%d  %d:%d:%d\n",
                     syscallName(logTrace[i].syscallNumber),
-                    logTrace[i].syscallNumber,
                     logTrace[i].pid,
                     logTrace[i].date.year,
                     logTrace[i].date.month,
@@ -143,18 +146,46 @@ char* syscallName(int syscallNum)
         case ( 22 ) : return "inc_num";
         case ( 23 ) : return "invoked_syscalls";
         case ( 24 ) : return "get_count";
+        case ( 25 ) : return "sort_syscalls";
         case ( 26 ) : return "log_syscalls";
     }
     return "";
+}
+
+void sort_syscalls_trap(int pid)
+{
+    int i , j;
+    for (i = 0; i < MAX_SYS_CALLS; i++)
+	{
+		for (j = 0; j < MAX_SYS_CALLS; j++)
+		{
+			if (traces[pid].exists[i] != 0 &&  traces[pid].exists[j] != 0 && traces[pid].syscallNumber[j] > traces[pid].syscallNumber[i])             
+			{
+				int tmp = traces[pid].exists[i];
+				traces[pid].exists[i] = traces[pid].exists[j];
+				traces[pid].exists[j] = tmp;
+                
+                tmp = traces[pid].syscallNumber[i];
+				traces[pid].syscallNumber[i] = traces[pid].syscallNumber[j];
+				traces[pid].syscallNumber[j] = tmp;
+                
+                struct rtcdate temp;
+                temp = traces[pid].times[i];
+				traces[pid].times[i] = traces[pid].times[j];
+				traces[pid].times[j] = temp;
+			}  
+		}
+	}
 }
 
 int getSyscallCount(int pid, int sysNum)
 {
     int i;
     int num = 0;
-    for(i = 0 ; i < 200 ; i++)
+    cprintf("pid %d sys %d\n", pid, sysNum);
+    for(i = 0 ; i < MAX_SYS_CALLS ; i++)
     {
-        if(traces[pid].trap[i] != 0 && traces[pid].trapNum[i] == sysNum)
+        if(traces[pid].exists[i] != 0 && traces[pid].syscallNumber[i] == sysNum)
             num++;
     }
     return num;

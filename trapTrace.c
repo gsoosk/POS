@@ -154,6 +154,10 @@ char* syscallName(int syscallNum)
 
 void sort_syscalls_trap(int pid)
 {
+    if(traces[pid].exists[0] == 0){
+        cprintf("~This pid can not found\n");
+        return;
+    }
     int i , j;
     for (i = 0; i < MAX_SYS_CALLS; i++)
 	{

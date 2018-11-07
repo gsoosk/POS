@@ -19,14 +19,28 @@ void initTraces()
         }  
 }
 
-void addNewTrace(int pid, int syscallNumber)
+void addNewTrace(int pid, int syscallNumber, char* args)
 {
     int i = 0 ;
     while (traces[pid].exists[i] != 0)
         i++;  
     traces[pid].exists[i] = 1;
     traces[pid].syscallNumber[i] = syscallNumber;
+    strncpy(traces[pid].syscallArgs[i],args, strlen(args));
     cmostime( &traces[pid].times[i] );
+}
+
+char* addNewArgTrace(char* des, char* arg, char* type)
+{
+    char argInfo[256];
+    strncpy(argInfo, "  ", 3);
+    strconcat(argInfo, "argType : ");
+    strconcat(argInfo, type);
+    strconcat(argInfo, " Value : ");
+    strconcat(argInfo, arg);
+    strconcat(argInfo, "\n ");
+    strconcat(des, argInfo);
+    return des;
 }
 
 void showPidTraces(int pid)
@@ -36,7 +50,7 @@ void showPidTraces(int pid)
     {
         if(traces[pid].exists[i] != 0)
         {
-            cprintf("~ SystemCall %s  with trap number %d called at %d/%d/%d  %d:%d:%d\n",
+            cprintf("~ SystemCall %s  with trap number %d called at %d/%d/%d  %d:%d:%d\n%s",
                     syscallName(traces[pid].syscallNumber[i]),
                     traces[pid].syscallNumber[i],
                     traces[pid].times[i].year,
@@ -44,7 +58,8 @@ void showPidTraces(int pid)
                     traces[pid].times[i].day,
                     traces[pid].times[i].hour,
                     traces[pid].times[i].minute,
-                    traces[pid].times[i].second);
+                    traces[pid].times[i].second, 
+                    traces[pid].syscallArgs[i]);
         }
         else if( i == 0)
         {

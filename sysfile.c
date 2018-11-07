@@ -57,13 +57,19 @@ int
 sys_dup(void)
 {
   struct proc *curproc = myproc();
-  addNewTrace(curproc -> pid, SYS_dup);
+  
   curproc->count++;
   struct file *f;
   int fd;
 
   if(argfd(0, 0, &f) < 0)
     return -1;
+  
+  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  char temp[128]; int x; argint(0, &x);
+  addNewArgTrace(argsForTrace, itoa_simple(temp, x), "int");
+  addNewTrace(curproc -> pid, SYS_dup, argsForTrace);
+  
   if((fd=fdalloc(f)) < 0)
     return -1;
   filedup(f);
@@ -76,13 +82,21 @@ sys_read(void)
   struct proc *curproc = myproc();
   curproc->count++;
 
-  addNewTrace(curproc -> pid, SYS_read);
+  
   struct file *f;
   int n;
   char *p;
 
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
     return -1;
+  
+  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  char temp[128]; int x; argint(0, &x);
+  addNewArgTrace(argsForTrace, itoa_simple(temp, x), "int");
+  addNewArgTrace(argsForTrace, itoa_simple(temp, n), "int");
+  addNewArgTrace(argsForTrace, p, "char*");
+  addNewTrace(curproc -> pid, SYS_read, argsForTrace);
+
   return fileread(f, p, n);
 }
 
@@ -95,9 +109,17 @@ sys_write(void)
   
   struct proc *curproc = myproc();
   curproc->count++;
-  addNewTrace(curproc -> pid , SYS_write);
+  
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
     return -1;
+  
+  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  char temp[128]; int x; argint(0, &x);
+  addNewArgTrace(argsForTrace, itoa_simple(temp, x), "int");
+  addNewArgTrace(argsForTrace, itoa_simple(temp, n), "int");
+  addNewArgTrace(argsForTrace, p, "char*");
+  addNewTrace(curproc -> pid , SYS_write, argsForTrace);
+
   return filewrite(f, p, n);
 }
 
@@ -112,7 +134,12 @@ sys_close(void)
   myproc()->ofile[fd] = 0;
   struct proc *curproc = myproc();
   curproc->count++;
-  addNewTrace(curproc -> pid, SYS_close);
+
+  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  char temp[128]; int x; argint(0, &x);
+  addNewArgTrace(argsForTrace, itoa_simple(temp, x), "int");
+  addNewTrace(curproc -> pid, SYS_close, argsForTrace);
+
   fileclose(f);
   return 0;
 }
@@ -123,10 +150,17 @@ sys_fstat(void)
   struct file *f;
   struct stat *st;
   struct proc *curproc = myproc();
-  addNewTrace(curproc -> pid, SYS_fstat);
+  
   curproc->count++;
   if(argfd(0, 0, &f) < 0 || argptr(1, (void*)&st, sizeof(*st)) < 0)
     return -1;
+  
+  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  char temp[128]; int x; argint(0, &x);
+  addNewArgTrace(argsForTrace, itoa_simple(temp, x), "int");
+  addNewArgTrace(argsForTrace, itoa_simple(temp, (int) st), "stat*");
+  addNewTrace(curproc -> pid, SYS_fstat, argsForTrace);
+
   return filestat(f, st);
 }
 
@@ -138,10 +172,15 @@ sys_link(void)
   struct inode *dp, *ip;
   struct proc *curproc = myproc();
   curproc->count++;
-  addNewTrace(curproc -> pid, SYS_link);
+  
 
   if(argstr(0, &old) < 0 || argstr(1, &new) < 0)
     return -1;
+
+  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  addNewArgTrace(argsForTrace, old , "char*");
+  addNewArgTrace(argsForTrace, new , "char*");
+  addNewTrace(curproc -> pid, SYS_link, argsForTrace);
 
   begin_op();
   if((ip = namei(old)) == 0){
@@ -205,7 +244,7 @@ sys_unlink(void)
 {
   struct proc *curproc = myproc();
   curproc->count++;
-  addNewTrace(curproc -> pid, SYS_unlink);
+  
   struct inode *ip, *dp;
   struct dirent de;
   char name[DIRSIZ], *path;
@@ -213,6 +252,10 @@ sys_unlink(void)
 
   if(argstr(0, &path) < 0)
     return -1;
+
+  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  addNewArgTrace(argsForTrace, path, "char* ");
+  addNewTrace(curproc -> pid, SYS_unlink, argsForTrace);
 
   begin_op();
   if((dp = nameiparent(path, name)) == 0){
@@ -314,10 +357,15 @@ sys_open(void)
   struct inode *ip;
   struct proc *curproc = myproc();
   curproc->count++;
-  addNewTrace(curproc -> pid, SYS_open);
 
   if(argstr(0, &path) < 0 || argint(1, &omode) < 0)
     return -1;
+
+  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  char temp[128]; 
+  addNewArgTrace(argsForTrace, itoa_simple(temp, omode), "int");
+  addNewArgTrace(argsForTrace, path, "char*");
+  addNewTrace(curproc -> pid, SYS_open, argsForTrace);
 
   begin_op();
 
@@ -365,12 +413,17 @@ sys_mkdir(void)
   struct inode *ip;
   struct proc *curproc = myproc();
   curproc->count++;
-  addNewTrace(curproc -> pid, SYS_mkdir);
+ 
   begin_op();
   if(argstr(0, &path) < 0 || (ip = create(path, T_DIR, 0, 0)) == 0){
     end_op();
     return -1;
   }
+
+  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  addNewArgTrace(argsForTrace, path , "char*");
+  addNewTrace(curproc -> pid, SYS_mkdir, argsForTrace);
+
   iunlockput(ip);
   end_op();
   return 0;
@@ -384,7 +437,7 @@ sys_mknod(void)
   int major, minor;
   struct proc *curproc = myproc();
   curproc->count++;
-  addNewTrace(curproc -> pid, SYS_mknod);
+  
   begin_op();
   if((argstr(0, &path)) < 0 ||
      argint(1, &major) < 0 ||
@@ -395,6 +448,14 @@ sys_mknod(void)
   }
   iunlockput(ip);
   end_op();
+
+  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  char temp[128]; 
+  addNewArgTrace(argsForTrace, path, "char* ");
+  addNewArgTrace(argsForTrace, itoa_simple(temp, major), "int");
+  addNewArgTrace(argsForTrace, itoa_simple(temp, minor), "int");
+  addNewTrace(curproc -> pid, SYS_mknod, argsForTrace);
+
   return 0;
 }
 
@@ -404,13 +465,18 @@ sys_chdir(void)
   char *path;
   struct inode *ip;
   struct proc *curproc = myproc();
-  addNewTrace(curproc -> pid, SYS_chdir);
+  
   curproc->count++;
   begin_op();
   if(argstr(0, &path) < 0 || (ip = namei(path)) == 0){
     end_op();
     return -1;
   }
+
+  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  addNewArgTrace(argsForTrace, path, "char* ");
+  addNewTrace(curproc -> pid, SYS_chdir, argsForTrace);
+
   ilock(ip);
   if(ip->type != T_DIR){
     iunlockput(ip);
@@ -430,6 +496,7 @@ sys_exec(void)
   char *path, *argv[MAXARG];
   int i;
   uint uargv, uarg;
+  char execArgs[128]; strncpy(execArgs, " ", 2);
 
   if(argstr(0, &path) < 0 || argint(1, (int*)&uargv) < 0){
     return -1;
@@ -446,20 +513,37 @@ sys_exec(void)
     }
     if(fetchstr(uarg, &argv[i]) < 0)
       return -1;
+
+    strconcat(execArgs, "\n     ");
+    strconcat(execArgs, argv[i]);
   }
+
+  struct proc *curproc = myproc();
+
+  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  addNewArgTrace(argsForTrace, path, "char*");
+  addNewArgTrace(argsForTrace, execArgs, "char**");
+  addNewTrace(curproc -> pid, SYS_exec, argsForTrace);
+
   return exec(path, argv);
 }
 
 int
 sys_pipe(void)
 {
+  int *fd;
   struct proc *curproc = myproc();
   curproc->count++;
-  addNewTrace(curproc -> pid, SYS_pipe);
-  int *fd;
+
+  argptr(0, (void*)&fd, 2*sizeof(fd[0]));
+  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  char temp[128];
+  addNewArgTrace(argsForTrace, itoa_simple(temp, *fd), "int");
+  addNewTrace(curproc -> pid, SYS_pipe, argsForTrace);
+  
   struct file *rf, *wf;
   int fd0, fd1;
-
+  
   if(argptr(0, (void*)&fd, 2*sizeof(fd[0])) < 0)
     return -1;
   if(pipealloc(&rf, &wf) < 0)

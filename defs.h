@@ -150,7 +150,10 @@ char*           safestrcpy(char*, const char*, int);
 int             strlen(const char*);
 int             strncmp(const char*, const char*, uint);
 char*           strncpy(char*, const char*, int);
-
+char*           strconcat(char* des, char*src);
+int             atoi(const char *s);
+char     *itoa_simple_helper(char *dest, int i);
+char            *itoa_simple(char *dest, int i);
 // syscall.c
 int             argint(int, int*);
 int             argptr(int, char**, int);
@@ -194,10 +197,9 @@ void            clearpteu(pde_t *pgdir, char *uva);
 
 
 // for saving syscalls
-#define MAX_BUF_SIZE 32
+#define MAX_BUF_SIZE 512
 #define MAX_PID_NUMS 20
 #define MAX_SYS_CALLS 200
-// int numberOfProcesses = 0;
 struct sysCallTraces
 {
 
@@ -211,10 +213,11 @@ struct sysCallTraces
 extern struct sysCallTraces traces[MAX_PID_NUMS];
 
 void initTraces();
-void addNewTrace(int pid, int syscallNum);
+void addNewTrace(int pid, int syscallNum, char* args);
 void showPidTraces(int pid);
 char* syscallName(int syscallNum);
 void sort_syscalls_trap(int pid);
 int getSyscallCount(int pid, int sysNum);
+char* addNewArgTrace(char* des, char* arg, char* type);
 
 #endif

@@ -185,7 +185,7 @@ fork(void)
   struct proc *np;
   struct proc *curproc = myproc();
 
-  addNewTrace(curproc->pid, SYS_fork);
+  addNewTrace(curproc->pid, SYS_fork, "");
 
   // Allocate process.
   if((np = allocproc()) == 0){
@@ -235,7 +235,7 @@ exit(void)
   struct proc *curproc = myproc();
   struct proc *p;
   int fd;
-  addNewTrace(curproc -> pid, SYS_exit);
+  addNewTrace(curproc -> pid, SYS_exit, "");
   if(curproc == initproc)
     panic("init exiting");
 
@@ -282,7 +282,7 @@ wait(void)
   struct proc *p;
   int havekids, pid;
   struct proc *curproc = myproc();
-  addNewTrace(curproc -> pid, SYS_wait);
+  addNewTrace(curproc -> pid, SYS_wait, "");
   acquire(&ptable.lock);
   
   curproc->count++;
@@ -492,7 +492,11 @@ kill(int pid)
   struct proc *p;
   struct proc *curproc = myproc();
   curproc->count++;
-  addNewTrace(curproc -> pid, SYS_kill);
+
+  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  char temp[128];
+  addNewArgTrace(argsForTrace, itoa_simple(temp, pid), "int");
+  addNewTrace(curproc -> pid, SYS_kill,argsForTrace);
 
   acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){

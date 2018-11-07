@@ -18,7 +18,6 @@ exec(char *path, char **argv)
   struct proghdr ph;
   pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
-  addNewTrace(curproc -> pid, SYS_exec);
   curproc->count++;
   begin_op();
 

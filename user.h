@@ -31,6 +31,7 @@ int get_count(int pid, int sysNum);
 // ulib.c
 int stat(const char*, struct stat*);
 char* strcpy(char*, const char*);
+char* strnconcat(char* os, const char*cs, int n);
 void *memmove(void*, const void*, int);
 char* strchr(const char*, char c);
 int strcmp(const char*, const char*);

@@ -6,6 +6,7 @@
         "defs.h": "c",
         "date.h": "c",
         "syscall.h": "c",
-        "x86.h": "c"
+        "x86.h": "c",
+        "traps.h": "c"
     }
 }

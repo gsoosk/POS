@@ -103,12 +103,10 @@ sys_uptime(void)
 int 
 sys_inc_num(void)
 {
-  int n;
   struct proc *curproc = myproc();
   curproc->count++;
   addNewTrace(curproc -> pid, SYS_inc_num);
-  argint(0, &n);
-  cprintf("Hello World! %d \n", n);
+  cprintf("increased number is : %d \n", curproc->tf->oesp + 1);
   return 1;
 }
 

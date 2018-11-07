@@ -106,7 +106,6 @@ sys_write(void)
   struct file *f;
   int n;
   char *p;
-  
   struct proc *curproc = myproc();
   curproc->count++;
   
@@ -435,6 +434,7 @@ sys_mknod(void)
   struct inode *ip;
   char *path;
   int major, minor;
+
   struct proc *curproc = myproc();
   curproc->count++;
   

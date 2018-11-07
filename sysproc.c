@@ -116,17 +116,17 @@ sys_uptime(void)
 int 
 sys_inc_num(void)
 {
-  int n;
   struct proc *curproc = myproc();
   curproc->count++;
-  argint(0, &n);
+
 
   char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
   char temp[128]; 
-  addNewArgTrace(argsForTrace, itoa_simple(temp, n), "int");
+  addNewArgTrace(argsForTrace, itoa_simple(temp, curproc->tf->oesp), "int");
   addNewTrace(curproc -> pid, SYS_inc_num, argsForTrace);
 
-  cprintf("Hello World! %d \n", n);
+  cprintf("increased number is : %d \n", curproc->tf->oesp + 1);
+
   return 1;
 }
 
@@ -146,6 +146,15 @@ sys_invoked_syscalls(void)
 
   showPidTraces(pid);
   return 1;
+}
+
+void
+sys_log_syscalls(void)
+{
+  struct proc *curproc = myproc();
+  curproc->count++;
+  addNewTrace(curproc -> pid, SYS_log_syscalls, "");
+  showLogOfProcesses();
 }
 
 int

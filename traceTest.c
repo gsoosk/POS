@@ -9,6 +9,8 @@ int main(int argc, char *argv[])
     printf(1, "1.invoked_syscalls\n");
     printf(1, "2.get_count\n");
     printf(1 ,"3.sort_syscalls\n");
+    printf(1, "4.log_syscalls\n");
+    printf(1, "5.inc_num\n");
 
     char buf[1024];
     read(1, buf, 1024);
@@ -36,6 +38,17 @@ int main(int argc, char *argv[])
         int pid = atoi(buf);
         sort_syscalls(pid);
         //invoked_syscalls(pid);
+    }
+    else if(atoi(buf) == 4)
+    {
+        log_syscalls();
+    }
+    else if(atoi(buf) == 5)
+    {
+        printf(1, "enter number : \n");
+        read(1, buf, 1024);
+        int number = atoi(buf);
+        inc_num(number);
     }
     exit();
 }

@@ -19,7 +19,7 @@ exec(char *path, char **argv)
   pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
   addNewTrace(curproc -> pid, SYS_exec);
-
+  curproc->count++;
   begin_op();
 
   if((ip = namei(path)) == 0){

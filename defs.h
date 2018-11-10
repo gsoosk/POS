@@ -210,10 +210,9 @@ struct syscallLog
 #define MAX_PID_NUMS 20
 #define MAX_SYS_CALLS 200
 
-extern int processIsAliveOrNot[MAX_PID_NUMS];
 struct sysCallTraces
 {
-
+    int isAlive;
     int numberOfSystemcalls;
     int exists[MAX_SYS_CALLS];
     int syscallNumber[MAX_SYS_CALLS];

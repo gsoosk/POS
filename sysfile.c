@@ -523,6 +523,7 @@ sys_exec(void)
   char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
   addNewArgTrace(argsForTrace, path, "char*");
   addNewArgTrace(argsForTrace, execArgs, "char**");
+  setProcessAlive(curproc -> pid);
   addNewTrace(curproc -> pid, SYS_exec, argsForTrace);
 
   return exec(path, argv);

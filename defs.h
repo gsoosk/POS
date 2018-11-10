@@ -209,6 +209,8 @@ struct syscallLog
 #define MAX_BUF_SIZE 512
 #define MAX_PID_NUMS 20
 #define MAX_SYS_CALLS 200
+
+extern int processIsAliveOrNot[MAX_PID_NUMS];
 struct sysCallTraces
 {
 
@@ -229,5 +231,7 @@ char* syscallName(int syscallNum);
 void sort_syscalls_trap(int pid);
 int getSyscallCount(int pid, int sysNum);
 char* addNewArgTrace(char* des, char* arg, char* type);
+void setProcessAlive(int pid);
+void setProcessDead(int pid);
 
 #endif

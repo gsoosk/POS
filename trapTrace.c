@@ -8,17 +8,30 @@
 #include "syscall.h"
 
 struct sysCallTraces traces[MAX_PID_NUMS];
+int processIsAliveOrNot[MAX_PID_NUMS];
 
 void initTraces()
 {
     int i;
     int j;
     for( j = 0 ; j < MAX_PID_NUMS ; j++)
+    {
         for( i = 0 ; i < MAX_SYS_CALLS ; i++)
         {
             traces[j].exists[i] = 0;
             strncpy(traces[j].syscallArgs[i], "", 0);
         }  
+        processIsAliveOrNot[j] = 0;
+    }
+        
+}
+void setProcessAlive(int pid)
+{
+    processIsAliveOrNot[pid] = 1;
+}
+void setProcessDead(int pid)
+{
+    processIsAliveOrNot[pid] = 0;
 }
 
 void addNewTrace(int pid, int syscallNumber, char* args)
@@ -87,7 +100,7 @@ void showLogOfProcesses()
     int i=0, j=0;
     for(i=0; i<MAX_PID_NUMS; i++) {
         for(j=0; j<MAX_SYS_CALLS; j++) {
-            if(!traces[i].exists[j])
+            if(!traces[i].exists[j] || !processIsAliveOrNot[i])
                 break;
             logTrace[numberOfTraps].date = traces[i].times[j];            
             logTrace[numberOfTraps].dateTime = timeToNumber(traces[i].times[j]);

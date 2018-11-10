@@ -235,6 +235,7 @@ exit(void)
   struct proc *curproc = myproc();
   struct proc *p;
   int fd;
+  setProcessDead(curproc -> pid);
   addNewTrace(curproc -> pid, SYS_exit, "");
   if(curproc == initproc)
     panic("init exiting");

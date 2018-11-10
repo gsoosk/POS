@@ -103,7 +103,11 @@ void showLogOfProcesses()
         {
             if (logTrace[j].dateTime > logTrace[i].dateTime)             
             {
-                int tmp = logTrace[i].dateTime;
+                int tmp = logTrace[i].syscallNumber;
+                logTrace[i].syscallNumber = logTrace[j].syscallNumber;
+                logTrace[j].syscallNumber = tmp;
+
+                tmp = logTrace[i].dateTime;
                 logTrace[i].dateTime = logTrace[j].dateTime;
                 logTrace[j].dateTime = tmp;
                             

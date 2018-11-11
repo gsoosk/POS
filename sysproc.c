@@ -122,10 +122,10 @@ sys_inc_num(void)
 
   char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
   char temp[128]; 
-  addNewArgTrace(argsForTrace, itoa_simple(temp, curproc->tf->oesp), "int");
+  addNewArgTrace(argsForTrace, itoa_simple(temp, curproc->tf->edx), "int");
   addNewTrace(curproc -> pid, SYS_inc_num, argsForTrace);
 
-  cprintf("increased number is : %d \n", curproc->tf->oesp + 1);
+  cprintf("increased number is : %d \n", curproc->tf->edx + 1);
 
   return 1;
 }

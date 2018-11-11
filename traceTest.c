@@ -48,7 +48,12 @@ int main(int argc, char *argv[])
         printf(1, "enter number : \n");
         read(1, buf, 1024);
         int number = atoi(buf);
-        inc_num(number);
+        int backup;
+        __asm__("movl %%edx, %0" : "=r" (backup));
+        __asm__("movl %0, %%edx" :  : "r"(number) );
+        __asm__("movl $22 , %eax;");
+        __asm__("int $64");
+       
     }
     exit();
 }

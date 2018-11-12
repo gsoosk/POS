@@ -1,3 +1,6 @@
+#ifndef DEF
+#define DEF
+#include "date.h"
 struct buf;
 struct context;
 struct file;
@@ -147,7 +150,10 @@ char*           safestrcpy(char*, const char*, int);
 int             strlen(const char*);
 int             strncmp(const char*, const char*, uint);
 char*           strncpy(char*, const char*, int);
-
+char*           strconcat(char* des, char*src);
+int             atoi(const char *s);
+char     *itoa_simple_helper(char *dest, int i);
+char            *itoa_simple(char *dest, int i);
 // syscall.c
 int             argint(int, int*);
 int             argptr(int, char**, int);
@@ -188,3 +194,43 @@ void            clearpteu(pde_t *pgdir, char *uva);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
+
+// for show log
+struct syscallLog
+{
+    struct rtcdate date;
+    int dateTime;
+    int syscallNumber;
+    int pid;
+} ;
+
+
+// for saving syscalls
+#define MAX_BUF_SIZE 512
+#define MAX_PID_NUMS 20
+#define MAX_SYS_CALLS 200
+
+struct sysCallTraces
+{
+    int isAlive;
+    int numberOfSystemcalls;
+    int exists[MAX_SYS_CALLS];
+    int syscallNumber[MAX_SYS_CALLS];
+    char syscallArgs[MAX_SYS_CALLS][MAX_BUF_SIZE];
+    
+    struct rtcdate times[MAX_SYS_CALLS];
+} ;
+extern struct sysCallTraces traces[MAX_PID_NUMS];
+
+void initTraces();
+void addNewTrace(int pid, int syscallNum, char* args);
+void showPidTraces(int pid);
+void showLogOfProcesses();
+char* syscallName(int syscallNum);
+void sort_syscalls_trap(int pid);
+int getSyscallCount(int pid, int sysNum);
+char* addNewArgTrace(char* des, char* arg, char* type);
+void setProcessAlive(int pid);
+void setProcessDead(int pid);
+
+#endif

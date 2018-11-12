@@ -103,3 +103,51 @@ strlen(const char *s)
   return n;
 }
 
+char*
+strconcat(char* os, char*cs)
+{
+  int i = 0 ;
+  while(os[i] != '\0')
+    i++;
+  
+  int j = 0;
+  while(cs[j] != '\0')
+  {
+    os[i + j] = cs[j];
+    j++;
+  }
+  os[i + j] = '\0'; 
+  return os;
+}
+
+int
+atoi(const char *s)
+{
+  int n;
+
+  n = 0;
+  while('0' <= *s && *s <= '9')
+    n = n*10 + *s++ - '0';
+  return n;
+}
+
+char *
+itoa_simple_helper(char *dest, int i) {
+  if (i <= -10) {
+    dest = itoa_simple_helper(dest, i/10);
+  }
+  *dest++ = '0' - i%10;
+  return dest;
+}
+
+char *
+itoa_simple(char *dest, int i) {
+  char *s = dest;
+  if (i < 0) {
+    *s++ = '-';
+  } else {
+    i = -i;
+  }
+  *itoa_simple_helper(s, i) = '\0';
+  return dest;
+}

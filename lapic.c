@@ -4,7 +4,6 @@
 #include "param.h"
 #include "types.h"
 #include "defs.h"
-#include "date.h"
 #include "memlayout.h"
 #include "traps.h"
 #include "mmu.h"

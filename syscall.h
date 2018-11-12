@@ -20,3 +20,8 @@
 #define SYS_link   19
 #define SYS_mkdir  20
 #define SYS_close  21
+#define SYS_inc_num 22
+#define SYS_invoked_syscalls 23
+#define SYS_get_count 24
+#define SYS_sort_syscalls 25
+#define SYS_log_syscalls 26

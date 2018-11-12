@@ -23,10 +23,16 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+// int inc_num(int);
+int invoked_syscalls(int pid);
+int sort_syscalls(int pid);
+int get_count(int pid, int sysNum);
+int log_syscalls(void);
 
 // ulib.c
 int stat(const char*, struct stat*);
 char* strcpy(char*, const char*);
+char* strnconcat(char* os, const char*cs, int n);
 void *memmove(void*, const void*, int);
 char* strchr(const char*, char c);
 int strcmp(const char*, const char*);

@@ -2,6 +2,11 @@
     "files.associations": {
         "locale": "c",
         "user.h": "c",
-        "ostream": "c"
+        "ostream": "c",
+        "defs.h": "c",
+        "date.h": "c",
+        "syscall.h": "c",
+        "x86.h": "c",
+        "traps.h": "c"
     }
 }

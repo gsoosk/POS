@@ -104,3 +104,16 @@ memmove(void *vdst, const void *vsrc, int n)
     *dst++ = *src++;
   return vdst;
 }
+char*
+strnconcat(char* os, const char*cs, int n)
+{
+  int i = 0 ;
+  while(os[i] != '\0')
+    i++;
+  
+  int j;
+  for(j = 0 ; j < n ; j++)
+    os[i + j] = cs[j];
+  os[i + n] = '\0';
+  return os;
+}

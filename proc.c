@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "syscall.h"
 
 struct {
   struct spinlock lock;
@@ -184,11 +185,13 @@ fork(void)
   struct proc *np;
   struct proc *curproc = myproc();
 
+  addNewTrace(curproc->pid, SYS_fork, "");
+
   // Allocate process.
   if((np = allocproc()) == 0){
     return -1;
   }
-
+  
   // Copy process state from proc.
   if((np->pgdir = copyuvm(curproc->pgdir, curproc->sz)) == 0){
     kfree(np->kstack);
@@ -218,6 +221,8 @@ fork(void)
 
   release(&ptable.lock);
 
+  np->count++;
+  curproc->count++;
   return pid;
 }
 
@@ -230,7 +235,8 @@ exit(void)
   struct proc *curproc = myproc();
   struct proc *p;
   int fd;
-
+  setProcessDead(curproc -> pid);
+  addNewTrace(curproc -> pid, SYS_exit, "");
   if(curproc == initproc)
     panic("init exiting");
 
@@ -260,6 +266,8 @@ exit(void)
         wakeup1(initproc);
     }
   }
+  p->count++;
+  curproc->count++;
 
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
@@ -275,12 +283,15 @@ wait(void)
   struct proc *p;
   int havekids, pid;
   struct proc *curproc = myproc();
-  
+  addNewTrace(curproc -> pid, SYS_wait, "");
   acquire(&ptable.lock);
+  
+  curproc->count++;
   for(;;){
     // Scan through table looking for exited children.
     havekids = 0;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      p->count++;
       if(p->parent != curproc)
         continue;
       havekids = 1;
@@ -480,9 +491,17 @@ int
 kill(int pid)
 {
   struct proc *p;
+  struct proc *curproc = myproc();
+  curproc->count++;
+
+  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  char temp[128];
+  addNewArgTrace(argsForTrace, itoa_simple(temp, pid), "int");
+  addNewTrace(curproc -> pid, SYS_kill,argsForTrace);
 
   acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    p->count++;
     if(p->pid == pid){
       p->killed = 1;
       // Wake process from sleep if necessary.
@@ -516,7 +535,7 @@ procdump(void)
   char *state;
   uint pc[10];
 
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+  for( p= ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->state == UNUSED)
       continue;
     if(p->state >= 0 && p->state < NELEM(states) && states[p->state])
@@ -529,6 +548,7 @@ procdump(void)
       for(i=0; i<10 && pc[i] != 0; i++)
         cprintf(" %p", pc[i]);
     }
+    cprintf(" system call count: %d" , p->count);
     cprintf("\n");
   }
 }

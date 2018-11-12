@@ -18,6 +18,7 @@ New Features
 * log_syscalls() : log all systemcalls used in all processes sorted by time 
 * inc_num(int number) : this systemcall using register instead of stack to pass argumans. for doing that first backup from a register then add number to it. (using assembly)
 * traceTest : it's a user application in shell for using these systemcalls. you can use it with `traceTest` command in shell.
+* ctrl + p : with using `ctrl + p` you can see count of systemcalls in one process
 
 How to use? 
 ------

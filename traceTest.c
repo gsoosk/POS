@@ -53,6 +53,7 @@ int main(int argc, char *argv[])
         __asm__("movl %0, %%edx" :  : "r"(number) );
         __asm__("movl $22 , %eax;");
         __asm__("int $64");
+        __asm__("movl %0, %%edx" :  : "r"(backup) );
        
     }
     exit();

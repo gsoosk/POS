@@ -118,15 +118,12 @@ sys_inc_num(void)
 {
   struct proc *curproc = myproc();
   curproc->count++;
-
+  cprintf("increased number is : %d \n", curproc->tf->edx + 1);
 
   char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
   char temp[128]; 
   addNewArgTrace(argsForTrace, itoa_simple(temp, curproc->tf->edx), "int");
   addNewTrace(curproc -> pid, SYS_inc_num, argsForTrace);
-
-  cprintf("increased number is : %d \n", curproc->tf->edx + 1);
-
   return 1;
 }
 

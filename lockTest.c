@@ -2,15 +2,19 @@
 #include "stat.h"
 #include "fcntl.h" // for using file defines
 #include "user.h" // for using from strlen
+
 #define NCHILD 10
 void ownerBase(void);
 void ticketLockTest(void);
+void readerWriterLock(void);
 void delay(int);
+
 int main(int argc, char *argv[]) 
 {
     printf(1, "Which lock do you want to test ? \n");
     printf(1, "1.owner base release sleep lock\n");
     printf(1, "2.ticket lock shared counter test\n");
+    printf(1, "3.test reader writer lock\n");
 
     char buf[1024];
     
@@ -25,6 +29,10 @@ int main(int argc, char *argv[])
         {
             ticketLockTest();
             break;
+        }
+        else if(atoi(buf) == 3)
+        {
+            readerWriterLock();
         }
         else
             printf(1, "enter a valid number please.\n");
@@ -75,6 +83,46 @@ void ticketLockTest()
         printf(1, "user program finished\n");
     }
 }
+
+int findNumberDigits(uint pattern)
+{
+  int num = 0;
+  while(1)
+  {
+    pattern = pattern / 10;
+    if(pattern == 0)
+      break;
+    num++;
+  }
+  return num+1;
+}
+
+void readerWriterLock()
+{
+    char buf[1024];
+    printf(1, "enter pattern : \n");
+    read(1, buf, 1024);
+    int pattern = atoi(buf);
+    int length = findNumberDigits(pattern);
+
+    rwinit();
+    char p[1];
+    int i;
+    for(i = 1; i < length; i++)
+    {
+        if (fork() == 0)
+        {
+            p[0] = buf[i];
+            rwtest(atoi(p));
+            exit();
+        }
+        else
+            continue;
+    }
+    for(i = 1; i < length; i++)
+        wait();
+}
+
 void delay(int numberOfClocks)
 {
     int firstClock = uptime();

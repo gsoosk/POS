@@ -247,5 +247,6 @@ int enable_disable(void);
 // for new synchornazation
 extern struct sleeplock lock;
 extern struct ticketlock ticketLock;
-
+extern struct ticketlock mutex;
+extern struct ticketlock wrt;
 #endif

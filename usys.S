@@ -40,5 +40,7 @@ SYSCALL(releasesleep_syscalls)
 SYSCALL(acquiresleep_syscalls)
 SYSCALL(ticketlockinit)
 SYSCALL(ticketlocktest)
+SYSCALL(rwinit)
+SYSCALL(rwtest)
 
 

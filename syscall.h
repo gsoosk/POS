@@ -30,6 +30,8 @@
 #define SYS_acquiresleep_syscalls 28
 #define SYS_ticketlockinit 29
 #define SYS_ticketlocktest 30
+#define SYS_rwinit 31
+#define SYS_rwtest 32
 
 #define SYS_disable_enable_trace 31
 

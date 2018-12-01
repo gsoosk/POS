@@ -115,6 +115,8 @@ extern int sys_releasesleep_syscalls(void);
 extern int sys_acquiresleep_syscalls(void);
 extern int sys_ticketlockinit(void);
 extern int sys_ticketlocktest(void);
+extern int sys_rwinit(void);
+extern int sys_rwtest(void);
 
 
 
@@ -150,7 +152,8 @@ static int (*syscalls[])(void) = {
 [SYS_acquiresleep_syscalls] sys_acquiresleep_syscalls,
 [SYS_ticketlockinit] sys_ticketlockinit,
 [SYS_ticketlocktest] sys_ticketlocktest,
-
+[SYS_rwinit] sys_rwinit,
+[SYS_rwtest] sys_rwtest,
 };
 
 void

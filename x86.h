@@ -130,7 +130,7 @@ xchg(volatile uint *addr, uint newval)
   return result;
 }
 
-static inline uint
+static inline int
 atomic_increament(volatile uint *addr)
 {
   uint result;

@@ -180,6 +180,7 @@ char* syscallName(int syscallNum)
         case ( 24 ) : return "get_count";
         case ( 25 ) : return "sort_syscalls";
         case ( 26 ) : return "log_syscalls";
+        case ( 27 ) : return "releasesleep_syscalls";
     }
     return "";
 }

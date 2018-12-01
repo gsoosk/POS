@@ -25,5 +25,5 @@ void acquireticket(struct ticketlock *lock)
     int ticket;
     ticket = atomic_increament(&lock->ticket);
 
-    while(lock->turn )
+    while(lock->turn ){}
 }

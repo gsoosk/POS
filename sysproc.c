@@ -6,6 +6,8 @@
 #include "mmu.h"
 #include "proc.h"
 #include "syscall.h"
+#include "spinlock.h"
+#include "sleeplock.h"
 
 int
 sys_fork(void)
@@ -145,11 +147,6 @@ sys_invoked_syscalls(void)
   return 1;
 }
 
-void sys_releasesleep_syscalls(void)
-{
-  
-}
-
 void
 sys_log_syscalls(void)
 {
@@ -201,4 +198,28 @@ sys_get_count(void)
   else
     cprintf("~There is no systemcall for this process\n");
   return syscallsCount;
+}
+
+void sys_releasesleep_syscalls(void)
+{
+  struct sleeplock lock;
+  lock.lk.locked = 0;
+  lock.locked = 0;
+  lock.pid = myproc()->pid;
+  acquiresleep(&lock);
+  cprintf("sleeplock is now locked\n");
+
+  int pid = fork();
+  if(pid == 0)
+  {
+    lock.pid = myproc()->pid;
+    newreleasesleep(&lock);
+    cprintf("sleep lock in child is %d\n", lock.locked);
+    exit();
+  }
+  wait();
+  cprintf("child terminate\n");
+  newreleasesleep(&lock);
+  cprintf("sleep lock in parent(owner) is %d\n", lock.locked);
+  
 }

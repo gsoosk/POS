@@ -233,7 +233,7 @@ void sys_ticketlocktest(void)
 {
   acquireticket(&ticketLock);
   sharedCounter ++;
-  cprintf("counter increamented to %d in pid = %d \n", sharedCounter, myproc()->pid);
+  cprintf("counter incremented to %d in pid = %d \n", sharedCounter, myproc()->pid);
   releaseticket(&ticketLock);
 }
 
@@ -242,12 +242,10 @@ void sys_rwinit(void)
     mutex.name = "writer";
     mutex.ticket = 0;
     mutex.turn = 1;
-    initlock(&mutex.lk, "ticket mutex lock");
 
     wrt.name = "wrt";
     wrt.ticket = 0;
     wrt.turn = 1;
-    initlock(&wrt.lk, "ticket wrt lock");
 }
 
 void sys_rwtest(void)

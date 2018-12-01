@@ -7,6 +7,7 @@
 void ownerBase(void);
 void ticketLockTest(void);
 void readerWriterLock(void);
+void delay(int);
 
 int main(int argc, char *argv[]) 
 {
@@ -27,6 +28,7 @@ int main(int argc, char *argv[])
         else if(atoi(buf) == 2)
         {
             ticketLockTest();
+            break;
         }
         else if(atoi(buf) == 3)
         {
@@ -57,7 +59,7 @@ void ticketLockTest()
 {
     int pid;
     ticketlockinit();
-
+    delay(100);
     pid = fork();
     int i;
     for(i = 1; i < NCHILD; i++)
@@ -69,6 +71,7 @@ void ticketLockTest()
     }
     else if(pid == 0)
     {
+        delay(100);
         printf(1, "child adding to shared counter\n");
         ticketlocktest();
     }
@@ -118,5 +121,14 @@ void readerWriterLock()
     }
     for(i = 1; i < length; i++)
         wait();
+}
 
+void delay(int numberOfClocks)
+{
+    int firstClock = uptime();
+    int incClock = uptime();
+    while(incClock >= (firstClock + numberOfClocks) )
+    {
+        incClock = uptime();
+    }
 }

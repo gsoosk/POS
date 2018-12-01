@@ -15,43 +15,25 @@
 void initticketlock(struct ticketlock *lock, char* name)
 {
     lock->name = name;
-    lock->pid = myproc()->pid;
     lock->ticket = 0;
     lock->turn = 1;
-    initlock(&lock->lk, "ticket lock");
 }
+
 
 void acquireticket(struct ticketlock *lock)
 {
-    
-    // if(holdingticket(lock))
-    //     panic("acquire");
-
     int ticket;
-    ticket = atomic_increament(&lock->ticket);
+    ticket = atomic_increment(&lock->ticket);
 
-    acquire(&lock->lk);
     while(lock->turn != ticket ){
-        sleep(lock, &lock->lk);
+        ticketSleep(lock);
     }
-    
-    lock->pid = myproc()->pid;
-    release(&lock->lk);
 }
+
 void releaseticket(struct ticketlock *lock)
 {
-    // if(!holdingticket(lock))
-    //     panic("release");
-
-    acquire(&lock->lk);
-    lock->pid = 0;
-    
-    atomic_increament(&lock->turn);
-    
+    atomic_increment(&lock->turn); 
     wakeup(lock);
-    release(&lock->lk);
 }
-int holdingticket(struct ticketlock *lock)
-{
-  return (lock->ticket != lock->turn) && (lock->pid == myproc()->pid);
-}
+
+

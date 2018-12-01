@@ -10,6 +10,7 @@ struct proc;
 struct rtcdate;
 struct spinlock;
 struct sleeplock;
+struct ticketlock;
 struct stat;
 struct superblock;
 
@@ -142,6 +143,12 @@ void            releasesleep(struct sleeplock*);
 void            newreleasesleep(struct sleeplock*);
 int             holdingsleep(struct sleeplock*);
 void            initsleeplock(struct sleeplock*, char*);
+
+// ticketlock.c
+void            acquireticket(struct ticketlock*);
+void            initticketlock(struct ticketlock*, char*);
+void            releaseticket(struct ticketlock*);
+int             holdingticket(struct ticketlock*);
 
 // string.c
 int             memcmp(const void*, const void*, uint);

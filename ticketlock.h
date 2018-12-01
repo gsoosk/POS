@@ -1,9 +1,9 @@
 struct ticketlock {
-  int ticket;       // Is the lock held?
-  int turn;
+    int ticket;       // Is the lock held?
+    int turn;
+    struct spinlock lk;
 
-  struct proc *proc;
-  
-  // For debugging:
-  char *name;        // Name of lock.
+    // For debugging:
+    char *name;        // Name of lock.
+    int pid;     
 };

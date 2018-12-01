@@ -43,6 +43,21 @@ releasesleep(struct sleeplock *lk)
   }
 }
 
+void
+newreleasesleep(struct sleeplock *lk)
+{
+  int pid = myproc()->pid;
+  if(lk->pid == pid) {
+    acquire(&lk->lk);
+    lk->locked = 0;
+    lk->pid = 0;
+    wakeup(lk);
+    release(&lk->lk);
+  }
+  else
+    cprintf("Only owner of lock can release it\nThis procces id is %d but sleeplock is locked by pid %d\n", pid, lk->pid);
+}
+
 int
 holdingsleep(struct sleeplock *lk)
 {

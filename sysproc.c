@@ -145,6 +145,11 @@ sys_invoked_syscalls(void)
   return 1;
 }
 
+void sys_releasesleep_syscalls(void)
+{
+  
+}
+
 void
 sys_log_syscalls(void)
 {

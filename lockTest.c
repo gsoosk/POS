@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
         else if(atoi(buf) == 2)
         {
             ticketLockTest();
+            break;
         }
         else
             printf(1, "enter a valid number please.\n");

@@ -110,6 +110,9 @@ extern int sys_get_count(void);
 extern int sys_log_syscalls(void);
 extern int sys_releasesleep_syscalls(void);
 extern int sys_acquiresleep_syscalls(void);
+extern int sys_ticketlockinit(void);
+extern int sys_ticketlocktest(void);
+
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -140,6 +143,8 @@ static int (*syscalls[])(void) = {
 [SYS_log_syscalls] sys_log_syscalls,
 [SYS_releasesleep_syscalls] sys_releasesleep_syscalls,
 [SYS_acquiresleep_syscalls] sys_acquiresleep_syscalls,
+[SYS_ticketlockinit] sys_ticketlockinit,
+[SYS_ticketlocktest] sys_ticketlocktest
 };
 
 void

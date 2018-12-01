@@ -30,6 +30,8 @@ int get_count(int pid, int sysNum);
 int log_syscalls(void);
 int releasesleep_syscalls(void);
 int acquiresleep_syscalls(void);
+int ticketlockinit(void);
+int ticketlocktest(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

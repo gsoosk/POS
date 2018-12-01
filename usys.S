@@ -36,3 +36,7 @@ SYSCALL(get_count)
 SYSCALL(log_syscalls)
 SYSCALL(releasesleep_syscalls)
 SYSCALL(acquiresleep_syscalls)
+SYSCALL(ticketlockinit)
+SYSCALL(ticketlocktest)
+
+

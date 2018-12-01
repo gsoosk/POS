@@ -230,7 +230,6 @@ struct sysCallTraces
 } ;
 extern struct sysCallTraces traces[MAX_PID_NUMS];
 
-extern struct sleeplock lock;
 
 void initTraces();
 void addNewTrace(int pid, int syscallNum, char* args);
@@ -243,4 +242,7 @@ char* addNewArgTrace(char* des, char* arg, char* type);
 void setProcessAlive(int pid);
 void setProcessDead(int pid);
 
+// for new synchornazation
+extern struct sleeplock lock;
+extern struct ticketlock ticketLock;
 #endif

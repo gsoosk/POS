@@ -27,3 +27,6 @@
 #define SYS_log_syscalls 26
 #define SYS_releasesleep_syscalls 27
 #define SYS_acquiresleep_syscalls 28
+#define SYS_ticketlockinit 29
+#define SYS_ticketlocktest 30
+

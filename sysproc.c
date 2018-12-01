@@ -8,8 +8,13 @@
 #include "syscall.h"
 #include "spinlock.h"
 #include "sleeplock.h"
+#include "ticketlock.h"
 
+//initialization of testing locks :
 struct sleeplock lock;
+struct ticketlock ticketLock;
+int sharedCounter = 0;
+
 
 int
 sys_fork(void)
@@ -214,4 +219,17 @@ void sys_acquiresleep_syscalls(void)
 void sys_releasesleep_syscalls(void)
 {
   newreleasesleep(&lock);
+}
+
+void sys_ticketlockinit(void)
+{
+  initticketlock(&ticketLock, "TestTicketLock");
+}
+
+void sys_ticketlocktest(void)
+{
+  acquireticket(&ticketLock);
+  sharedCounter ++;
+  cprintf("counter increamented to %d in pid = %d \n", sharedCounter, myproc()->pid);
+  releaseticket(&ticketLock);
 }

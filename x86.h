@@ -131,15 +131,16 @@ xchg(volatile uint *addr, uint newval)
 }
 
 static inline int
-atomic_increament(volatile int *addr)
+atomic_increament(int* variable)
 {
-  int result;
-  int incValue = 1;
-  asm volatile("lock; xaddl %%eax, %2;" :
-               "=a" (incValue) :
-               "a" (result) , "m" (*addr) :
-               "memory");
-  return result;
+  int incNum = 1;
+  asm volatile("lock; xaddl %0, %1"
+        : "+r" (incNum), "+m" (*variable)
+        :
+        : "memory"
+      );
+  return incNum + 1;
+  
 }
 
 static inline uint

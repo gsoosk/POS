@@ -182,6 +182,8 @@ char* syscallName(int syscallNum)
         case ( 26 ) : return "log_syscalls";
         case ( 27 ) : return "releasesleep_syscalls";
         case ( 28 ) : return "acquiresleep_syscalls";
+        case ( 29 ) : return "ticketlockinit";
+        case ( 30 ) : return "ticketlocktest";
     }
     return "";
 }

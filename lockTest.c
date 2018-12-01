@@ -2,26 +2,73 @@
 #include "stat.h"
 #include "fcntl.h" // for using file defines
 #include "user.h" // for using from strlen
-
+#define NCHILD 10
+void ownerBase(void);
+void ticketLockTest(void);
 int main(int argc, char *argv[]) 
 {
     printf(1, "Which lock do you want to test ? \n");
     printf(1, "1.owner base release sleep lock\n");
+    printf(1, "2.ticket lock shared counter test\n");
 
     char buf[1024];
-    read(1, buf, 1024);
-    if(atoi(buf) == 1)
+    
+    while(read(1, buf, 1024))
     {
-        acquiresleep_syscalls();
-        int pid = fork();
-        if(pid == 0)
+        if(atoi(buf) == 1)
         {
-            releasesleep_syscalls();
-            exit();
+            ownerBase();
+            break;
         }
-        wait();
-        printf(1, "child terminated\n");
-        releasesleep_syscalls();
+        else if(atoi(buf) == 2)
+        {
+            ticketLockTest();
+        }
+        else
+            printf(1, "enter a valid number please.\n");
     }
+   
+
     exit();
+}
+
+void ownerBase()
+{
+    acquiresleep_syscalls();
+    int pid = fork();
+    if(pid == 0)
+    {
+        releasesleep_syscalls();
+        exit();
+    }
+    wait();
+    printf(1, "child terminated\n");
+    releasesleep_syscalls();
+}
+void ticketLockTest()
+{
+    int pid;
+    ticketlockinit();
+
+    pid = fork();
+    int i;
+    for(i = 1; i < NCHILD; i++)
+        if(pid > 0)
+            pid = fork();
+    if(pid < 0)
+    {
+        printf(2, "fork error\n");
+    }
+    else if(pid == 0)
+    {
+        printf(1, "child adding to shared counter\n");
+        ticketlocktest();
+    }
+    else
+    {
+        int i;
+        for(i = 0; i < NCHILD; i++)
+            wait();
+        printf(1, "user program finished\n");
+    }
 }

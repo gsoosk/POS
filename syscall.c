@@ -109,6 +109,7 @@ extern int sys_sort_syscalls(void);
 extern int sys_get_count(void);
 extern int sys_log_syscalls(void);
 extern int sys_releasesleep_syscalls(void);
+extern int sys_acquiresleep_syscalls(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -137,7 +138,8 @@ static int (*syscalls[])(void) = {
 [SYS_sort_syscalls] sys_sort_syscalls,
 [SYS_get_count] sys_get_count,
 [SYS_log_syscalls] sys_log_syscalls,
-[SYS_log_syscalls] sys_releasesleep_syscalls,
+[SYS_releasesleep_syscalls] sys_releasesleep_syscalls,
+[SYS_acquiresleep_syscalls] sys_acquiresleep_syscalls,
 };
 
 void

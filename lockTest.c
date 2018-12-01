@@ -12,6 +12,15 @@ int main(int argc, char *argv[])
     read(1, buf, 1024);
     if(atoi(buf) == 1)
     {
+        acquiresleep_syscalls();
+        int pid = fork();
+        if(pid == 0)
+        {
+            releasesleep_syscalls();
+            exit();
+        }
+        wait();
+        printf(1, "child terminated\n");
         releasesleep_syscalls();
     }
     exit();

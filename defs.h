@@ -223,6 +223,8 @@ struct sysCallTraces
 } ;
 extern struct sysCallTraces traces[MAX_PID_NUMS];
 
+extern struct sleeplock lock;
+
 void initTraces();
 void addNewTrace(int pid, int syscallNum, char* args);
 void showPidTraces(int pid);

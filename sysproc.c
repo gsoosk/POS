@@ -230,6 +230,6 @@ void sys_ticketlocktest(void)
 {
   acquireticket(&ticketLock);
   sharedCounter ++;
-  cprintf("counter increamented to %d in pid = %d \n", sharedCounter, myproc()->pid);
+  cprintf("counter incremented to %d in pid = %d \n", sharedCounter, myproc()->pid);
   releaseticket(&ticketLock);
 }

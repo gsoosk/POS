@@ -9,6 +9,8 @@
         "x86.h": "c",
         "traps.h": "c",
         "proc.h": "c",
-        "param.h": "c"
+        "param.h": "c",
+        "spinlock.h": "c",
+        "ticketlock.h": "c"
     }
 }

@@ -134,9 +134,9 @@ static inline void
 atomic_increament(int* variable)
 {
   int incNum = 1;
-  __asm__ volatile("lock; xaddl %0, %1"
-        : "+r" (incNum), "+m" (*variable) // input+output
-        : // No input-only
+  asm volatile("lock; xaddl %0, %1"
+        : "+r" (incNum), "+m" (*variable)
+        :
         : "memory"
       );
 }

@@ -230,7 +230,7 @@ struct sysCallTraces
     struct rtcdate times[MAX_SYS_CALLS];
 } ;
 extern struct sysCallTraces traces[MAX_PID_NUMS];
-
+extern int enable;
 
 void initTraces();
 void addNewTrace(int pid, int syscallNum, char* args);
@@ -242,8 +242,10 @@ int getSyscallCount(int pid, int sysNum);
 char* addNewArgTrace(char* des, char* arg, char* type);
 void setProcessAlive(int pid);
 void setProcessDead(int pid);
+int enable_disable(void);
 
 // for new synchornazation
 extern struct sleeplock lock;
 extern struct ticketlock ticketLock;
+
 #endif

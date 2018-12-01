@@ -28,6 +28,8 @@ int invoked_syscalls(int pid);
 int sort_syscalls(int pid);
 int get_count(int pid, int sysNum);
 int log_syscalls(void);
+int disable_enable_trace(void);
+//part 3 : sync
 int releasesleep_syscalls(void);
 int acquiresleep_syscalls(void);
 int ticketlockinit(void);

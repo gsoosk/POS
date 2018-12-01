@@ -25,8 +25,11 @@
 #define SYS_get_count 24
 #define SYS_sort_syscalls 25
 #define SYS_log_syscalls 26
+//Part 3
 #define SYS_releasesleep_syscalls 27
 #define SYS_acquiresleep_syscalls 28
 #define SYS_ticketlockinit 29
 #define SYS_ticketlocktest 30
+
+#define SYS_disable_enable_trace 31
 

@@ -154,6 +154,11 @@ sys_invoked_syscalls(void)
   return 1;
 }
 
+int
+sys_disable_enable_trace(void)
+{
+  return enable_disable();
+}
 void
 sys_log_syscalls(void)
 {

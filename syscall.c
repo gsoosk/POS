@@ -103,15 +103,19 @@ extern int sys_unlink(void);
 extern int sys_wait(void);
 extern int sys_write(void);
 extern int sys_uptime(void);
+//Part 2 
 extern int sys_inc_num(void);
 extern int sys_invoked_syscalls(void);
 extern int sys_sort_syscalls(void);
 extern int sys_get_count(void);
 extern int sys_log_syscalls(void);
+extern int sys_disable_enable_trace(void);
+//Part 3 : sync
 extern int sys_releasesleep_syscalls(void);
 extern int sys_acquiresleep_syscalls(void);
 extern int sys_ticketlockinit(void);
 extern int sys_ticketlocktest(void);
+
 
 
 static int (*syscalls[])(void) = {
@@ -141,10 +145,12 @@ static int (*syscalls[])(void) = {
 [SYS_sort_syscalls] sys_sort_syscalls,
 [SYS_get_count] sys_get_count,
 [SYS_log_syscalls] sys_log_syscalls,
+[SYS_disable_enable_trace] sys_disable_enable_trace,
 [SYS_releasesleep_syscalls] sys_releasesleep_syscalls,
 [SYS_acquiresleep_syscalls] sys_acquiresleep_syscalls,
 [SYS_ticketlockinit] sys_ticketlockinit,
-[SYS_ticketlocktest] sys_ticketlocktest
+[SYS_ticketlocktest] sys_ticketlocktest,
+
 };
 
 void

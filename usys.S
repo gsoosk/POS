@@ -34,6 +34,8 @@ SYSCALL(invoked_syscalls)
 SYSCALL(sort_syscalls)
 SYSCALL(get_count)
 SYSCALL(log_syscalls)
+SYSCALL(disable_enable_trace)
+
 SYSCALL(releasesleep_syscalls)
 SYSCALL(acquiresleep_syscalls)
 SYSCALL(ticketlockinit)

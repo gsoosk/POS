@@ -13,6 +13,9 @@
 //initialization of testing locks :
 struct sleeplock lock;
 struct ticketlock ticketLock;
+struct ticketlock wrt;
+struct ticketlock mutex;
+
 int sharedCounter = 0;
 
 
@@ -232,4 +235,24 @@ void sys_ticketlocktest(void)
   sharedCounter ++;
   cprintf("counter increamented to %d in pid = %d \n", sharedCounter, myproc()->pid);
   releaseticket(&ticketLock);
+}
+
+void sys_rwinit(void)
+{
+    mutex.name = "writer";
+    mutex.ticket = 0;
+    mutex.turn = 1;
+    initlock(&mutex.lk, "ticket mutex lock");
+
+    wrt.name = "wrt";
+    wrt.ticket = 0;
+    wrt.turn = 1;
+    initlock(&wrt.lk, "ticket wrt lock");
+}
+
+void sys_rwtest(void)
+{
+  int argPattern;
+  argint(0, &argPattern);
+  cprintf("pid : %d, pattern : %d\n", myproc()->pid, argPattern);
 }

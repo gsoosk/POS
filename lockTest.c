@@ -5,6 +5,7 @@
 #define NCHILD 10
 void ownerBase(void);
 void ticketLockTest(void);
+void delay(int);
 int main(int argc, char *argv[]) 
 {
     printf(1, "Which lock do you want to test ? \n");
@@ -49,7 +50,7 @@ void ticketLockTest()
 {
     int pid;
     ticketlockinit();
-
+    delay(100);
     pid = fork();
     int i;
     for(i = 1; i < NCHILD; i++)
@@ -61,6 +62,7 @@ void ticketLockTest()
     }
     else if(pid == 0)
     {
+        delay(100);
         printf(1, "child adding to shared counter\n");
         ticketlocktest();
     }
@@ -70,5 +72,14 @@ void ticketLockTest()
         for(i = 0; i < NCHILD; i++)
             wait();
         printf(1, "user program finished\n");
+    }
+}
+void delay(int numberOfClocks)
+{
+    int firstClock = uptime();
+    int incClock = uptime();
+    while(incClock >= (firstClock + numberOfClocks) )
+    {
+        incClock = uptime();
     }
 }

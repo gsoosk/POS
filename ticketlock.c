@@ -22,8 +22,8 @@ void initticketlock(struct ticketlock *lock, char* name)
 
 void acquireticket(struct ticketlock *lock)
 {
-    int ticket;
-    ticket = atomic_increament(&lock->ticket);
+    // int ticket;
+    // ticket = atomic_increament(&lock->ticket);
 
-    while(lock->turn ){}
+    // while(lock->turn ){}
 }

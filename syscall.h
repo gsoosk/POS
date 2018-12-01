@@ -25,4 +25,5 @@
 #define SYS_get_count 24
 #define SYS_sort_syscalls 25
 #define SYS_log_syscalls 26
-#define SYS_releasesleep_syscalls 26
+#define SYS_releasesleep_syscalls 27
+#define SYS_acquiresleep_syscalls 28

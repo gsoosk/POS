@@ -58,25 +58,20 @@ void ownerBase()
 void ticketLockTest()
 {
     int pid;
-    int delayCounter = 0;
     ticketlockinit();
+    delay(100);
     pid = fork();
     int i;
     for(i = 1; i < NCHILD; i++)
         if(pid > 0)
-        {
             pid = fork();
-            if(delayCounter % 3 == 0)
-                delay(1000000);
-        }
-          
     if(pid < 0)
     {
         printf(2, "fork error\n");
     }
     else if(pid == 0)
     {
-        delay(1000);
+        delay(100);
         printf(1, "child adding to shared counter\n");
         ticketlocktest();
     }
@@ -105,15 +100,14 @@ int findNumberDigits(uint pattern)
 void readerWriterLock()
 {
     char buf[1024];
+    memset(buf, 0, 1024);
     printf(1, "enter pattern : \n");
     read(1, buf, 1024);
-    int pattern = atoi(buf);
-    int length = findNumberDigits(pattern);
 
     rwinit();
     char p[1];
     int i;
-    for(i = 1; i < length; i++)
+    for(i = 1; i < strlen(buf) - 1; i++)
     {
         if (fork() == 0)
         {
@@ -124,7 +118,7 @@ void readerWriterLock()
         else
             continue;
     }
-    for(i = 1; i < length; i++)
+    for(i = 1; i < strlen(buf) - 1; i++)
         wait();
 }
 

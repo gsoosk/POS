@@ -37,6 +37,8 @@ sysproc.c
 # file system
 buf.h
 sleeplock.h
+rwlock.c
+rwlock.h
 ticketlock.h
 ticketlock.c
 fcntl.h

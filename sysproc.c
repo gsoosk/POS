@@ -11,10 +11,10 @@
 #include "ticketlock.h"
 
 //initialization of testing locks :
+struct spinlock lk;
 struct sleeplock lock;
 struct ticketlock ticketLock;
 struct ticketlock wrt;
-struct ticketlock mutex;
 
 int sharedCounter = 0;
 
@@ -244,18 +244,25 @@ void sys_ticketlocktest(void)
 
 void sys_rwinit(void)
 {
-    mutex.name = "writer";
-    mutex.ticket = 0;
-    mutex.turn = 1;
-
     wrt.name = "wrt";
     wrt.ticket = 0;
     wrt.turn = 1;
+
+    initlock(&lk, "wrt spinlock");
 }
 
 void sys_rwtest(void)
 {
   int argPattern;
   argint(0, &argPattern);
-  cprintf("pid : %d, pattern : %d\n", myproc()->pid, argPattern);
+  if(argPattern == 0)
+  {
+    //read
+    performReadLock(&wrt);
+  }
+  else if(argPattern == 1)
+  {
+    //write
+    performWriteLock(&wrt);
+  }
 }

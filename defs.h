@@ -151,6 +151,10 @@ void            initticketlock(struct ticketlock*, char*);
 void            releaseticket(struct ticketlock*);
 int             holdingticket(struct ticketlock*);
 
+// rwlock.c
+void            performReadLock(struct ticketlock*);
+void            performWriteLock(struct ticketlock*);
+
 // string.c
 int             memcmp(const void*, const void*, uint);
 void*           memmove(void*, const void*, uint);

@@ -58,20 +58,25 @@ void ownerBase()
 void ticketLockTest()
 {
     int pid;
+    int delayCounter = 0;
     ticketlockinit();
-    delay(100);
     pid = fork();
     int i;
     for(i = 1; i < NCHILD; i++)
         if(pid > 0)
+        {
             pid = fork();
+            if(delayCounter % 3 == 0)
+                delay(1000000);
+        }
+          
     if(pid < 0)
     {
         printf(2, "fork error\n");
     }
     else if(pid == 0)
     {
-        delay(100);
+        delay(1000);
         printf(1, "child adding to shared counter\n");
         ticketlocktest();
     }

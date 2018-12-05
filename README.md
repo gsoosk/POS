@@ -23,7 +23,9 @@ New Features
 * traceTest : it's a user application in shell for using these systemcalls. you can use it with `traceTest` command in shell.
 * ctrl + p : with using `ctrl + p` you can see count of systemcalls in one process
 ### Part 3 :
-
+* ticketlock added to OS
+* readers writers problem added
+* command `lockTest` added and you can test ticketlock and readers writers problem using this command
 How to use? 
 ------
 

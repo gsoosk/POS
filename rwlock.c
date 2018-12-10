@@ -18,39 +18,25 @@ struct spinlock lk;
 
 void performReadLock(struct ticketlock *wrt)
 {
-    if(readCount > 0)
-    {
-        acquire(&lk);
-        readCount++;
-        release(&lk);
-
-        cprintf("reading is performed value is %d\n", value);
-
-        acquire(&lk);
-        readCount--;
-        release(&lk);
-
-        if(readCount == 0)
-            releaseticket(wrt);
-    }
-    else
-    {
+    
+    if(readCount <= 0)
         acquireticket(wrt);
 
-        acquire(&lk);
-        readCount++;
-        release(&lk);
+    acquire(&lk);
+    readCount++;
+    release(&lk);
 
-        cprintf("reading is performed value is %d\n", value);
+    cprintf("reading is \
+    performed value is %d\n", value);
 
-        acquire(&lk);
-        readCount--;
-        release(&lk);
+    acquire(&lk);
+    readCount--;
+    release(&lk);
 
-        if(readCount == 0)
-            releaseticket(wrt);
-    }
+    if(readCount == 0)
+        releaseticket(wrt);
 }
+
 
 void performWriteLock(struct ticketlock *wrt)
 {

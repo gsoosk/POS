@@ -113,20 +113,21 @@ int findNumberDigits(uint pattern)
 
 void readerWriterLock()
 {
-    char buf[1024];
-    memset(buf, 0, 1024);
+     char buf[1024];
     printf(1, "enter pattern : \n");
-    read(1, buf, 1024);
+    int numOfChars = read(1, buf, 1024);
+    buf[numOfChars] = '\0';
 
     rwinit();
-    char p[1];
     int i;
-    for(i = 1; i < strlen(buf) - 1; i++)
+    for(i = 1; i < numOfChars - 1; i++)
     {
         if (fork() == 0)
         {
-            p[0] = buf[i];
-            rwtest(atoi(p));
+            if(buf[i] == '0')
+                rwtest(0);
+            else if(buf[i] == '1')
+                rwtest(1);
             exit();
         }
         else
@@ -139,19 +140,21 @@ void readerWriterLock()
 void writerReaderLock()
 {
     char buf[1024];
-    memset(buf, 0, 1024);
     printf(1, "enter pattern : \n");
-    read(1, buf, 1024);
+    int numOfChars = read(1, buf, 1024);
+    buf[numOfChars] = '\0';
 
     wrinit();
-    char p[1];
+    // char p[1];
     int i;
-    for(i = 1; i < strlen(buf) - 1; i++)
+    for(i = 1; i < numOfChars - 1; i++)
     {
         if (fork() == 0)
         {
-            p[0] = buf[i];
-            wrtest(atoi(p));
+            if(buf[i] == '0')
+                wrtest(0);
+            else if(buf[i] == '1')
+                wrtest(1);
             exit();
         }
         else

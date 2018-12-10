@@ -18,11 +18,8 @@ struct ticketlock ticketLock;
 struct ticketlock rwt;
 struct ticketlock wrt;
 struct ticketlock writeLock;
-struct ticketlock incLock;
-
 
 int sharedCounter = 0;
-
 
 int
 sys_fork(void)

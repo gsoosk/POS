@@ -11,10 +11,15 @@
 #include "ticketlock.h"
 
 //initialization of testing locks :
-struct spinlock lk;
+struct spinlock rwlk;
+struct spinlock wrlk;
 struct sleeplock lock;
 struct ticketlock ticketLock;
+struct ticketlock rwt;
 struct ticketlock wrt;
+struct ticketlock writeLock;
+struct ticketlock incLock;
+
 
 int sharedCounter = 0;
 
@@ -244,11 +249,11 @@ void sys_ticketlocktest(void)
 
 void sys_rwinit(void)
 {
-    wrt.name = "wrt";
-    wrt.ticket = 0;
-    wrt.turn = 1;
+    rwt.name = "rwt";
+    rwt.ticket = 0;
+    rwt.turn = 1;
 
-    initlock(&lk, "wrt spinlock");
+    initlock(&rwlk, "rwt spinlock");
 }
 
 void sys_rwtest(void)
@@ -258,11 +263,40 @@ void sys_rwtest(void)
   if(argPattern == 0)
   {
     //read
-    performReadLock(&wrt);
+    performReadLock(&rwt);
   }
   else if(argPattern == 1)
   {
     //write
-    performWriteLock(&wrt);
+    performWriteLock(&rwt);
+  }
+}
+
+void sys_wrinit(void)
+{
+  wrt.name = "wrt";
+  wrt.ticket = 0;
+  wrt.turn = 1;
+
+  writeLock.name = "write lock";
+  writeLock.ticket = 0;
+  writeLock.turn = 1;
+
+  initlock(&wrlk, "wrt spinlock");
+}
+
+void sys_wrtest(void)
+{
+  int argPattern;
+  argint(0, &argPattern);
+  if(argPattern == 0)
+  {
+    //read
+    performWriteFirstReadingLock(&wrt);
+  }
+  else if(argPattern == 1)
+  {
+    //write
+    performWriteFirstWritingLock(&wrt, &writeLock);
   }
 }

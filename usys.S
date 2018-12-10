@@ -42,5 +42,6 @@ SYSCALL(ticketlockinit)
 SYSCALL(ticketlocktest)
 SYSCALL(rwinit)
 SYSCALL(rwtest)
-
+SYSCALL(wrinit)
+SYSCALL(wrtest)
 

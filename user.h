@@ -36,6 +36,8 @@ int ticketlockinit(void);
 int ticketlocktest(void);
 int rwinit(void);
 int rwtest(uint pattern);
+int wrinit(void);
+int wrtest(uint pattern);
 
 // ulib.c
 int stat(const char*, struct stat*);

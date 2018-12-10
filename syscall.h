@@ -32,6 +32,8 @@
 #define SYS_ticketlocktest 30
 #define SYS_rwinit 31
 #define SYS_rwtest 32
+#define SYS_wrinit 33
+#define SYS_wrtest 34
 
 #define SYS_disable_enable_trace 31
 

@@ -10,9 +10,13 @@
 #include "ticketlock.h"
 
 int readCount = 0;
+int writeCount = 0;
 int value = 0;
+int writeValue = 0;
+int queueWrite = 0;
 
 struct spinlock lk;
+struct spinlock wlk;
 
 
 
@@ -59,6 +63,57 @@ void performWriteLock(struct ticketlock *wrt)
     //writing is performed
     value++;
     cprintf("writing is performed value is %d\n", value);
+
+    releaseticket(wrt);
+}
+
+void performWriteFirstWritingLock(struct ticketlock *wrt, struct ticketlock *writeLock)
+{
+
+    if(writeCount == 0) {
+        acquire(&wlk);
+        queueWrite++;
+        cprintf("write come in queue size : %d\n", queueWrite);
+        release(&wlk);
+
+        acquireticket(wrt);
+
+        acquire(&wlk);
+        queueWrite--;
+        cprintf("write goes out queue size %d\n", queueWrite);
+        release(&wlk);
+    }
+
+    acquire(&wlk);
+    writeCount++;
+    release(&wlk);
+
+    acquireticket(writeLock);
+    writeValue++;
+    releaseticket(writeLock);
+        
+    cprintf("writing is performed, value is %d\n", writeValue);
+
+    acquire(&wlk);
+    writeCount--;
+    release(&wlk);
+
+    if(writeCount == 0)
+        releaseticket(wrt);
+}
+
+void performWriteFirstReadingLock(struct ticketlock *wrt)
+{
+    acquireticket(wrt);
+
+    while(queueWrite > 0)
+    {
+        cprintf("queue is greater than zero : %d\n", queueWrite);
+        releaseticket(wrt);
+        acquireticket(wrt);
+    }
+    //reading
+    cprintf("reading is performed value, is %d\n", writeValue);
 
     releaseticket(wrt);
 }

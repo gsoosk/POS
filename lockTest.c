@@ -7,6 +7,7 @@
 void ownerBase(void);
 void ticketLockTest(void);
 void readerWriterLock(void);
+void writerReaderLock(void);
 void delay(int);
 
 int main(int argc, char *argv[]) 
@@ -14,7 +15,8 @@ int main(int argc, char *argv[])
     printf(1, "Which lock do you want to test ? \n");
     printf(1, "1.owner base release sleep lock\n");
     printf(1, "2.ticket lock shared counter test\n");
-    printf(1, "3.test reader writer lock\n");
+    printf(1, "3.test reader writer lock with readers priority\n");
+    printf(1, "4.test reader writer lock with writers priority\n");
 
     char buf[1024];
     
@@ -33,6 +35,12 @@ int main(int argc, char *argv[])
         else if(atoi(buf) == 3)
         {
             readerWriterLock();
+            break;
+        }
+        else if(atoi(buf) == 4)
+        {
+            writerReaderLock();
+            break;
         }
         else
             printf(1, "enter a valid number please.\n");
@@ -55,6 +63,7 @@ void ownerBase()
     printf(1, "child terminated\n");
     releasesleep_syscalls();
 }
+
 void ticketLockTest()
 {
     int pid;
@@ -113,6 +122,31 @@ void readerWriterLock()
         {
             p[0] = buf[i];
             rwtest(atoi(p));
+            exit();
+        }
+        else
+            continue;
+    }
+    for(i = 1; i < strlen(buf) - 1; i++)
+        wait();
+}
+
+void writerReaderLock()
+{
+    char buf[1024];
+    memset(buf, 0, 1024);
+    printf(1, "enter pattern : \n");
+    read(1, buf, 1024);
+
+    wrinit();
+    char p[1];
+    int i;
+    for(i = 1; i < strlen(buf) - 1; i++)
+    {
+        if (fork() == 0)
+        {
+            p[0] = buf[i];
+            wrtest(atoi(p));
             exit();
         }
         else

@@ -196,6 +196,8 @@ char* syscallName(int syscallNum)
         case ( 30 ) : return "ticketlocktest";
         case ( 31 ) : return "rwinit";
         case ( 32 ) : return "rwtest";
+        case ( 33 ) : return "wrinit";
+        case ( 34 ) : return "wrtest";
     }
     return "";
 }

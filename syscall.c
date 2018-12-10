@@ -117,7 +117,8 @@ extern int sys_ticketlockinit(void);
 extern int sys_ticketlocktest(void);
 extern int sys_rwinit(void);
 extern int sys_rwtest(void);
-
+extern int sys_wrinit(void);
+extern int sys_wrtest(void);
 
 
 static int (*syscalls[])(void) = {
@@ -154,6 +155,8 @@ static int (*syscalls[])(void) = {
 [SYS_ticketlocktest] sys_ticketlocktest,
 [SYS_rwinit] sys_rwinit,
 [SYS_rwtest] sys_rwtest,
+[SYS_wrinit] sys_wrinit,
+[SYS_wrtest] sys_wrtest,
 };
 
 void

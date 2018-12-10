@@ -26,6 +26,7 @@ void acquireticket(struct ticketlock *lock)
     ticket = atomic_increment(&lock->ticket);
 
     while(lock->turn != ticket ){
+        
         ticketSleep(lock);
     }
 }

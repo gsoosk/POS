@@ -72,8 +72,13 @@ void ticketLockTest()
     pid = fork();
     int i;
     for(i = 1; i < NCHILD; i++)
+    {
         if(pid > 0)
             pid = fork();
+        if(i % 3 == 0 && pid == 0)
+            delay(2000);
+    }
+       
     if(pid < 0)
     {
         printf(2, "fork error\n");

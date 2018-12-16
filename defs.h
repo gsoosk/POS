@@ -10,6 +10,7 @@ struct proc;
 struct rtcdate;
 struct spinlock;
 struct sleeplock;
+struct ticketlock;
 struct stat;
 struct superblock;
 
@@ -119,6 +120,7 @@ void            scheduler(void) __attribute__((noreturn));
 void            sched(void);
 void            setproc(struct proc*);
 void            sleep(void*, struct spinlock*);
+void            ticketSleep(struct ticketlock *chan);
 void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
@@ -139,8 +141,21 @@ void            popcli(void);
 // sleeplock.c
 void            acquiresleep(struct sleeplock*);
 void            releasesleep(struct sleeplock*);
+void            newreleasesleep(struct sleeplock*);
 int             holdingsleep(struct sleeplock*);
 void            initsleeplock(struct sleeplock*, char*);
+
+// ticketlock.c
+void            acquireticket(struct ticketlock*);
+void            initticketlock(struct ticketlock*, char*);
+void            releaseticket(struct ticketlock*);
+int             holdingticket(struct ticketlock*);
+
+// rwlock.c
+void            performReadLock(struct ticketlock*);
+void            performWriteLock(struct ticketlock*);
+void            performWriteFirstWritingLock(struct ticketlock *wrt, struct ticketlock *writeLock);
+void            performWriteFirstReadingLock(struct ticketlock *wrt);
 
 // string.c
 int             memcmp(const void*, const void*, uint);
@@ -221,6 +236,7 @@ struct sysCallTraces
     struct rtcdate times[MAX_SYS_CALLS];
 } ;
 extern struct sysCallTraces traces[MAX_PID_NUMS];
+extern int enable;
 
 void initTraces();
 void addNewTrace(int pid, int syscallNum, char* args);
@@ -232,5 +248,11 @@ int getSyscallCount(int pid, int sysNum);
 char* addNewArgTrace(char* des, char* arg, char* type);
 void setProcessAlive(int pid);
 void setProcessDead(int pid);
+int enable_disable(void);
 
+// for new synchornazation
+extern struct sleeplock lock;
+extern struct ticketlock ticketLock;
+extern struct ticketlock mutex;
+extern struct ticketlock wrt;
 #endif

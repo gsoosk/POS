@@ -130,6 +130,20 @@ xchg(volatile uint *addr, uint newval)
   return result;
 }
 
+static inline int
+atomic_increment(int* variable)
+{
+  int incNum = 1;
+  asm volatile("lock; xaddl %0, %1"
+        : "+r" (incNum), "+m" (*variable)
+        :
+        : "memory"
+      );
+  return incNum + 1;
+  
+}
+
+
 static inline uint
 rcr2(void)
 {

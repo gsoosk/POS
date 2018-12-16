@@ -6,7 +6,7 @@
 #include "mmu.h"
 #include "x86.h"
 #include "syscall.h"
-
+int enable = 0;
 struct sysCallTraces traces[MAX_PID_NUMS];
 
 
@@ -33,28 +33,38 @@ void setProcessDead(int pid)
 {
     traces[pid].isAlive = 0;
 }
-
+int enable_disable()
+{
+    enable = !enable;
+    return enable;
+}
 void addNewTrace(int pid, int syscallNumber, char* args)
 {
-    int i = 0 ;
-    while (traces[pid].exists[i] != 0)
-        i++;  
-    traces[pid].exists[i] = 1;
-    traces[pid].syscallNumber[i] = syscallNumber;
-    strncpy(traces[pid].syscallArgs[i],args, strlen(args));
-    cmostime( &traces[pid].times[i] );
+    if(enable)
+    {
+        int i = 0 ;
+        while (traces[pid].exists[i] != 0)
+            i++;  
+        traces[pid].exists[i] = 1;
+        traces[pid].syscallNumber[i] = syscallNumber;
+        strncpy(traces[pid].syscallArgs[i],args, strlen(args));
+        cmostime( &traces[pid].times[i] );
+    }
+    
 }
 
 char* addNewArgTrace(char* des, char* arg, char* type)
 {
-    char argInfo[256];
-    strncpy(argInfo, "  ", 3);
-    strconcat(argInfo, "argType : ");
-    strconcat(argInfo, type);
-    strconcat(argInfo, " Value : ");
-    strconcat(argInfo, arg);
-    strconcat(argInfo, "\n ");
-    strconcat(des, argInfo);
+    if(enable){
+        char argInfo[256];
+        strncpy(argInfo, "  ", 3);
+        strconcat(argInfo, "argType : ");
+        strconcat(argInfo, type);
+        strconcat(argInfo, " Value : ");
+        strconcat(argInfo, arg);
+        strconcat(argInfo, "\n ");
+        strconcat(des, argInfo);
+    }
     return des;
 }
 
@@ -180,6 +190,14 @@ char* syscallName(int syscallNum)
         case ( 24 ) : return "get_count";
         case ( 25 ) : return "sort_syscalls";
         case ( 26 ) : return "log_syscalls";
+        case ( 27 ) : return "releasesleep_syscalls";
+        case ( 28 ) : return "acquiresleep_syscalls";
+        case ( 29 ) : return "ticketlockinit";
+        case ( 30 ) : return "ticketlocktest";
+        case ( 31 ) : return "rwinit";
+        case ( 32 ) : return "rwtest";
+        case ( 33 ) : return "wrinit";
+        case ( 34 ) : return "wrtest";
     }
     return "";
 }

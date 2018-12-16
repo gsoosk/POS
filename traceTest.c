@@ -6,15 +6,24 @@
 int main(int argc, char *argv[]) 
 {
     printf(1, "What system call do you like to test ? \n");
+    printf(1, "0.enable/disable\n");
     printf(1, "1.invoked_syscalls\n");
     printf(1, "2.get_count\n");
     printf(1 ,"3.sort_syscalls\n");
     printf(1, "4.log_syscalls\n");
     printf(1, "5.inc_num\n");
+  
 
     char buf[1024];
     read(1, buf, 1024);
-    if(atoi(buf) == 1)
+    if(atoi(buf) == 0)
+    {
+        if(disable_enable_trace() == 1)
+            printf(1, "enabled\n");
+        else
+            printf(1, "disabled\n");
+    }
+    else if(atoi(buf) == 1)
     {
         printf(1, "enter pid : \n");
         read(1, buf, 1024);

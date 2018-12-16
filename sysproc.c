@@ -6,6 +6,20 @@
 #include "mmu.h"
 #include "proc.h"
 #include "syscall.h"
+#include "spinlock.h"
+#include "sleeplock.h"
+#include "ticketlock.h"
+
+//initialization of testing locks :
+struct spinlock rwlk;
+struct spinlock wrlk;
+struct sleeplock lock;
+struct ticketlock ticketLock;
+struct ticketlock rwt;
+struct ticketlock wrt;
+struct ticketlock writeLock;
+
+int sharedCounter = 0;
 
 int
 sys_fork(void)
@@ -145,6 +159,11 @@ sys_invoked_syscalls(void)
   return 1;
 }
 
+int
+sys_disable_enable_trace(void)
+{
+  return enable_disable();
+}
 void
 sys_log_syscalls(void)
 {
@@ -196,4 +215,85 @@ sys_get_count(void)
   else
     cprintf("~There is no systemcall for this process\n");
   return syscallsCount;
+}
+
+void sys_acquiresleep_syscalls(void)
+{
+  lock.lk.locked = 0;
+  lock.locked = 0;
+  lock.pid = myproc()->pid;
+  acquiresleep(&lock);
+  cprintf("lock is now acquire by parent, pid : %d\n", myproc()->pid);
+}
+
+void sys_releasesleep_syscalls(void)
+{
+  newreleasesleep(&lock);
+}
+
+void sys_ticketlockinit(void)
+{
+  initticketlock(&ticketLock, "TestTicketLock");
+}
+
+void sys_ticketlocktest(void)
+{
+  acquireticket(&ticketLock);
+  sharedCounter ++;
+  cprintf("counter incremented to %d in pid = %d \n", sharedCounter, myproc()->pid);
+  releaseticket(&ticketLock);
+}
+
+void sys_rwinit(void)
+{
+    rwt.name = "rwt";
+    rwt.ticket = 0;
+    rwt.turn = 1;
+
+    initlock(&rwlk, "rwt spinlock");
+}
+
+void sys_rwtest(void)
+{
+  int argPattern;
+  argint(0, &argPattern);
+  if(argPattern == 0)
+  {
+    //read
+    performReadLock(&rwt);
+  }
+  else if(argPattern == 1)
+  {
+    //write
+    performWriteLock(&rwt);
+  }
+}
+
+void sys_wrinit(void)
+{
+  wrt.name = "wrt";
+  wrt.ticket = 0;
+  wrt.turn = 1;
+
+  writeLock.name = "write lock";
+  writeLock.ticket = 0;
+  writeLock.turn = 1;
+
+  initlock(&wrlk, "wrt spinlock");
+}
+
+void sys_wrtest(void)
+{
+  int argPattern;
+  argint(0, &argPattern);
+  if(argPattern == 0)
+  {
+    //read
+    performWriteFirstReadingLock(&wrt);
+  }
+  else if(argPattern == 1)
+  {
+    //write
+    performWriteFirstWritingLock(&wrt, &writeLock);
+  }
 }

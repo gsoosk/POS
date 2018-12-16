@@ -28,6 +28,16 @@ int invoked_syscalls(int pid);
 int sort_syscalls(int pid);
 int get_count(int pid, int sysNum);
 int log_syscalls(void);
+int disable_enable_trace(void);
+//part 3 : sync
+int releasesleep_syscalls(void);
+int acquiresleep_syscalls(void);
+int ticketlockinit(void);
+int ticketlocktest(void);
+int rwinit(void);
+int rwtest(uint pattern);
+int wrinit(void);
+int wrtest(uint pattern);
 
 // ulib.c
 int stat(const char*, struct stat*);
@@ -43,3 +53,5 @@ void* memset(void*, int, uint);
 void* malloc(uint);
 void free(void*);
 int atoi(const char*);
+char* itoa_simple_helper(char *dest, int i);
+char* itoa_simple(char *dest, int i);

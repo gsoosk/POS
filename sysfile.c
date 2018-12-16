@@ -112,12 +112,12 @@ sys_write(void)
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
     return -1;
   
-  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
-  char temp[128]; int x; argint(0, &x);
-  addNewArgTrace(argsForTrace, itoa_simple(temp, x), "int");
-  addNewArgTrace(argsForTrace, itoa_simple(temp, n), "int");
-  addNewArgTrace(argsForTrace, p, "char*");
-  addNewTrace(curproc -> pid , SYS_write, argsForTrace);
+  // char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  // char temp[128]; int x; argint(0, &x);
+  // addNewArgTrace(argsForTrace, itoa_simple(temp, x), "int");
+  // addNewArgTrace(argsForTrace, itoa_simple(temp, n), "int");
+  // addNewArgTrace(argsForTrace, p, "char*");
+  // addNewTrace(curproc -> pid , SYS_write, argsForTrace);
 
   return filewrite(f, p, n);
 }

@@ -4,6 +4,7 @@ POS
 POS is an OS cloned from xv6 kernel.
 * [Part 1](#part-1-)
 * [Part 2](#part-2-)
+* [Part 3](#part-3-)
 
 
 New Features 
@@ -21,7 +22,10 @@ New Features
 * inc_num(int number) : this systemcall using register instead of stack to pass argumans. for doing that first backup from a register then add number to it. (using assembly)
 * traceTest : it's a user application in shell for using these systemcalls. you can use it with `traceTest` command in shell.
 * ctrl + p : with using `ctrl + p` you can see count of systemcalls in one process
-
+### Part 3 :
+* ticketlock added to OS
+* readers writers problem added
+* command `lockTest` added and you can test ticketlock and readers writers problem using this command
 How to use? 
 ------
 

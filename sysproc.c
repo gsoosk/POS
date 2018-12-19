@@ -297,3 +297,18 @@ void sys_wrtest(void)
     performWriteFirstWritingLock(&wrt, &writeLock);
   }
 }
+
+void sys_select_sched()
+{
+  int algorithm;
+  argint(0, &algorithm);
+  scheduler_algorithm = algorithm;
+  
+}
+void sys_set_priority()
+{
+  int priority;
+  argint(0, &priority);
+  struct proc *process = myproc();
+  process -> priority = priority;
+}

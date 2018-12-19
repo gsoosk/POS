@@ -26,7 +26,7 @@ New Features
 * ticketlock added to OS
 * readers writers problem added
 * command `lockTest` added and you can test ticketlock and readers writers problem using this command
-### Part 4 (Scheduling):
+### Part 4 (CPU Scheduling):
 
 How to use? 
 ------

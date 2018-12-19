@@ -125,6 +125,11 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
+void            roundRobinSched(void) __attribute__((noreturn));
+void            prioritySched(void) __attribute__((noreturn));
+extern int      scheduler_algorithm;
+enum schedAlgorithms { ROUND_ROBIN };
+
 
 // swtch.S
 void            swtch(struct context**, struct context*);

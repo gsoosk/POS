@@ -34,6 +34,8 @@
 #define SYS_rwtest 32
 #define SYS_wrinit 33
 #define SYS_wrtest 34
-
-#define SYS_disable_enable_trace 31
+#define SYS_disable_enable_trace 35
+//Part 4 
+#define SYS_select_sched 36
+#define SYS_set_priority 37
 

@@ -38,6 +38,9 @@ int rwinit(void);
 int rwtest(uint pattern);
 int wrinit(void);
 int wrtest(uint pattern);
+//part 4 : sched
+int select_sched(int sched);
+int set_priority(int p);
 
 // ulib.c
 int stat(const char*, struct stat*);

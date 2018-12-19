@@ -359,12 +359,8 @@ roundRobinSched(void)
 
   }
 }
-void sys_set_priority()
+void find_and_set_priority(int priority , int pid)
 {
-  int priority;
-  argint(0, &priority);
-  int pid;
-  argint(1, &pid);
   struct proc *p;
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(pid == p->pid)
@@ -397,7 +393,7 @@ prioritySched(void)
         highPriority = p;
         priorityProcessSelected = 1;
       }
-      if(highPriority->priority < p->priority )
+      if(highPriority->priority > p->priority )
         highPriority = p;
     }
     if(priorityProcessSelected)

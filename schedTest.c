@@ -2,12 +2,12 @@
 #include "stat.h"
 #include "fcntl.h" // for using file defines
 #include "user.h" // for using from strlen
-#define NCHILD 10
+#define NCHILD 4
 void priorityTest();
 int main(int argc, char const *argv[])
 {
     printf(1, "Which sched do you want to test ? \n");
-
+    printf(1, "1. Priority \n");
     char buf[1024];
     
     while(read(1, buf, 1024))
@@ -27,15 +27,19 @@ int main(int argc, char const *argv[])
 void priorityTest()
 {
   int pid;
-    ticketlockinit();
     pid = fork();
     int i;
     for(i = 1; i < NCHILD; i++)
     {
         if(pid > 0)
+        {
             pid = fork();
-        if(i % 3 == 0 && pid == 0)
-            delay(2000);
+            printf(1, "What priority use for %d", pid);
+            char buf[1024];
+            read(1, buf, 1024);
+            set_priority(atoi(buf), pid);
+        }
+            
     }
        
     if(pid < 0)
@@ -44,14 +48,19 @@ void priorityTest()
     }
     else if(pid == 0)
     {
-        printf(1, "child adding to shared counter\n");
-        
+        int i ;
+        int ownPid;
+        ownPid = getpid();
+        printf(1, "Process %d is started \n", ownPid);
+        for(i = 0 ; i < 2000; i++)
+        {
+            // 1234.0323 * 3214.124;
+        }
+        printf(1, "Process %d is ended \n", ownPid);
+
     }
     else
     {
-        int i;
-        for(i = 0; i < NCHILD; i++)
-            wait();
-        printf(1, "user program finished\n");
+        printf(1, "Main user program finished\n");
     }
 }

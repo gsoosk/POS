@@ -185,7 +185,7 @@ fork(void)
   int i, pid;
   struct proc *np;
   struct proc *curproc = myproc();
-
+  
   addNewTrace(curproc->pid, SYS_fork, "");
 
   // Allocate process.
@@ -219,11 +219,12 @@ fork(void)
   acquire(&ptable.lock);
   np->priority = 1000;
   np->state = RUNNABLE;
-
   release(&ptable.lock);
-
   np->count++;
   curproc->count++;
+  
+  if(scheduler_algorithm == PRIORITY)
+    yield();
   return pid;
 }
 
@@ -370,6 +371,8 @@ void find_and_set_priority(int priority , int pid)
     }
   }
 }
+
+
 void 
 prioritySched(void)
 {
@@ -378,21 +381,16 @@ prioritySched(void)
   c->proc = 0;
  
   int priorityProcessSelected = 0;
-  int processRunning = 0;
   struct proc *highPriority; //process with highest priority
   for(;;){
     // Enable interrupts on this processor.
     priorityProcessSelected = 0;
-    processRunning = 0;
     sti();
-
+    
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state == RUNNING)
-        processRunning = 1;
-
       if(p->state != RUNNABLE)
         continue;
 
@@ -404,9 +402,8 @@ prioritySched(void)
       if(highPriority->priority > p->priority )
         highPriority = p;
     }
-    if(priorityProcessSelected && !processRunning)
+    if(priorityProcessSelected )
     {
-      cprintf("priority of %d selected %d and %d \n", highPriority->pid, highPriority->priority, processRunning);
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.

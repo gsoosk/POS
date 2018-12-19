@@ -2,7 +2,7 @@
 #include "stat.h"
 #include "fcntl.h" // for using file defines
 #include "user.h" // for using from strlen
-#define NCHILD 4
+#define NCHILD 10
 void priorityTest();
 int main(int argc, char const *argv[])
 {
@@ -26,8 +26,8 @@ int main(int argc, char const *argv[])
 }
 void priorityTest()
 {
-    set_priority(1, getpid());
-  int pid = 2;
+  set_priority(0, getpid());
+  int pid = getpid();
     
     int i;
     for(i = 1; i < NCHILD; i++)
@@ -37,11 +37,10 @@ void priorityTest()
             pid = fork();
             if(pid > 0)
             {
-                printf(1, "What priority use for %d", pid);
-            char buf[1024];
-            read(1, buf, 1024);
-            set_priority(atoi(buf), pid);
+            set_priority(10-i, pid);
             }
+            if(pid < 0 )
+                break;
             
         }
             
@@ -53,19 +52,23 @@ void priorityTest()
     }
     else if(pid == 0)
     {
-        int i ;
+        
         int ownPid;
         ownPid = getpid();
-        printf(1, "Process %d is started \n", ownPid);
-        for(i = 0 ; i < 2000; i++)
+        int i;
+        for(i = 0 ; i < 20000 ; i++)
         {
-            // 1234.0323 * 3214.124;
+            delay(200000000);
         }
-        printf(1, "Process %d is ended \n", ownPid);
+        
+        printf(1, "%d\n", ownPid);
 
     }
     else
     {
-        printf(1, "Main user program finished\n");
+        int i;
+        for(i = 0; i < NCHILD; i++)
+            wait();
+        printf(1, "Main user program finished fucking pid %d\n", getpid());
     }
 }

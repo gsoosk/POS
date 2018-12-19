@@ -20,7 +20,6 @@ exec(char *path, char **argv)
   struct proc *curproc = myproc();
   curproc->count++;
   //For testing priority
-  curproc->priority = 2;
   begin_op();
 
   if((ip = namei(path)) == 0){

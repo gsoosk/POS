@@ -26,6 +26,7 @@ int main(int argc, char const *argv[])
 }
 void priorityTest()
 {
+    set_priority(1, getpid());
   int pid;
     pid = fork();
     int i;

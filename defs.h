@@ -129,7 +129,7 @@ void            roundRobinSched(void) __attribute__((noreturn));
 void            prioritySched(void) __attribute__((noreturn));
 void            find_and_set_priority(int priority, int pid);
 extern int      scheduler_algorithm;
-enum schedAlgorithms { ROUND_ROBIN };
+enum schedAlgorithms { ROUND_ROBIN , PRIORITY};
 
 
 // swtch.S

@@ -7,7 +7,7 @@
 #include "proc.h"
 #include "spinlock.h"
 #include "syscall.h"
-int scheduler_algorithm = ROUND_ROBIN;
+int scheduler_algorithm = PRIORITY;
 
 struct {
   struct spinlock lock;

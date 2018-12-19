@@ -217,7 +217,7 @@ fork(void)
   pid = np->pid;
 
   acquire(&ptable.lock);
-
+  np->priority = 1000;
   np->state = RUNNABLE;
 
   release(&ptable.lock);
@@ -376,18 +376,26 @@ prioritySched(void)
   struct proc *p;
   struct cpu *c = mycpu();
   c->proc = 0;
+ 
   int priorityProcessSelected = 0;
+  int processRunning = 0;
   struct proc *highPriority; //process with highest priority
   for(;;){
     // Enable interrupts on this processor.
     priorityProcessSelected = 0;
+    processRunning = 0;
     sti();
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
+    
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state == RUNNING)
+        processRunning = 1;
+
       if(p->state != RUNNABLE)
         continue;
+
       if(!priorityProcessSelected)
       {
         highPriority = p;
@@ -396,8 +404,9 @@ prioritySched(void)
       if(highPriority->priority > p->priority )
         highPriority = p;
     }
-    if(priorityProcessSelected)
+    if(priorityProcessSelected && !processRunning)
     {
+      cprintf("priority of %d selected %d and %d \n", highPriority->pid, highPriority->priority, processRunning);
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
@@ -412,6 +421,7 @@ prioritySched(void)
       // It should have changed its p->state before coming back.
       c->proc = 0;
     }
+    
     release(&ptable.lock);
 
   }

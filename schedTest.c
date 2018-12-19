@@ -27,18 +27,22 @@ int main(int argc, char const *argv[])
 void priorityTest()
 {
     set_priority(1, getpid());
-  int pid;
-    pid = fork();
+  int pid = 2;
+    
     int i;
     for(i = 1; i < NCHILD; i++)
     {
         if(pid > 0)
         {
             pid = fork();
-            printf(1, "What priority use for %d", pid);
+            if(pid > 0)
+            {
+                printf(1, "What priority use for %d", pid);
             char buf[1024];
             read(1, buf, 1024);
             set_priority(atoi(buf), pid);
+            }
+            
         }
             
     }

@@ -359,6 +359,21 @@ roundRobinSched(void)
 
   }
 }
+void sys_set_priority()
+{
+  int priority;
+  argint(0, &priority);
+  int pid;
+  argint(1, &pid);
+  struct proc *p;
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(pid == p->pid)
+    {
+      p -> priority = priority;
+      break;
+    }
+  }
+}
 void 
 prioritySched(void)
 {

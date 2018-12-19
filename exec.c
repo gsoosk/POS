@@ -19,6 +19,8 @@ exec(char *path, char **argv)
   pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
   curproc->count++;
+  //For testing priority
+  curproc->priority = 2;
   begin_op();
 
   if((ip = namei(path)) == 0){

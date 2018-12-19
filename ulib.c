@@ -138,3 +138,13 @@ itoa_simple(char *dest, int i) {
   *itoa_simple_helper(s, i) = '\0';
   return dest;
 }
+
+void delay(int numberOfClocks)
+{
+    int firstClock = uptime();
+    int incClock = uptime();
+    while(incClock >= (firstClock + numberOfClocks) )
+    {
+        incClock = uptime();
+    }
+}

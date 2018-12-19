@@ -8,7 +8,7 @@ void ownerBase(void);
 void ticketLockTest(void);
 void readerWriterLock(void);
 void writerReaderLock(void);
-void delay(int);
+
 
 int main(int argc, char *argv[]) 
 {
@@ -164,12 +164,3 @@ void writerReaderLock()
         wait();
 }
 
-void delay(int numberOfClocks)
-{
-    int firstClock = uptime();
-    int incClock = uptime();
-    while(incClock >= (firstClock + numberOfClocks) )
-    {
-        incClock = uptime();
-    }
-}

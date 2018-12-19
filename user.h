@@ -40,7 +40,7 @@ int wrinit(void);
 int wrtest(uint pattern);
 //part 4 : sched
 int select_sched(int sched);
-int set_priority(int p);
+int set_priority(int p, int pid);
 
 // ulib.c
 int stat(const char*, struct stat*);
@@ -58,3 +58,5 @@ void free(void*);
 int atoi(const char*);
 char* itoa_simple_helper(char *dest, int i);
 char* itoa_simple(char *dest, int i);
+
+void delay(int numberOfClocks);

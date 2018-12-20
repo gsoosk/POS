@@ -115,7 +115,9 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
   //for using in FCFS scheduling algorithm
-  p->creation_time = ticks;
+  acquire(&tickslock);
+  p->creation_time = ticks++;
+  release(&tickslock);
   p->lottery_ticket = 1;
   p->schedQueue = LOTTERY;
   return p;

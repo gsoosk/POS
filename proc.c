@@ -335,7 +335,7 @@ FCFSSched(void)
   struct proc *p;
  
   int earliestProcessSelected = 0;
-  struct proc *earliestTime; //process that come earlier
+  struct proc *earliestTime = 0; //process that come earlier
   
   
     earliestProcessSelected = 0;
@@ -415,7 +415,7 @@ lotterySched(void){
   int sum_lotteries = 1;
   int random_ticket = 0;
   int isLotterySelected = 0;
-  struct proc *highLottery_ticket; //process with highest lottery ticket
+  struct proc *highLottery_ticket = 0; //process with highest lottery ticket
   
   // Enable interrupts on this processor.
   sum_lotteries = 1;
@@ -489,7 +489,7 @@ prioritySched(void)
   
  
   int priorityProcessSelected = 0;
-  struct proc *highPriority; //process with highest priority
+  struct proc *highPriority = 0; //process with highest priority
   // Enable interrupts on this processor.
   priorityProcessSelected = 0;
 

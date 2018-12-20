@@ -126,10 +126,11 @@ int             wait(void);
 void            wakeup(void*);
 void            yield(void);
 void            roundRobinSched(void) __attribute__((noreturn));
+void            FCFSSched(void) __attribute__((noreturn));
 void            prioritySched(void) __attribute__((noreturn));
 void            find_and_set_priority(int priority, int pid);
 extern int      scheduler_algorithm;
-enum schedAlgorithms { ROUND_ROBIN , PRIORITY};
+enum schedAlgorithms { ROUND_ROBIN , PRIORITY , FCFS};
 
 
 // swtch.S

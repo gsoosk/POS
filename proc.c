@@ -7,7 +7,7 @@
 #include "proc.h"
 #include "spinlock.h"
 #include "syscall.h"
-int scheduler_algorithm = PRIORITY;
+int scheduler_algorithm = FCFS;
 
 struct {
   struct spinlock lock;
@@ -113,7 +113,8 @@ found:
   p->context = (struct context*)sp;
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
-
+  //for using in FCFS scheduling algorithm
+  p->creation_time = ticks;
   return p;
 }
 
@@ -192,7 +193,7 @@ fork(void)
   if((np = allocproc()) == 0){
     return -1;
   }
-  
+
   // Copy process state from proc.
   if((np->pgdir = copyuvm(curproc->pgdir, curproc->sz)) == 0){
     kfree(np->kstack);
@@ -326,6 +327,55 @@ wait(void)
 
 //Schedulers algorithms 
 void 
+FCFSSched(void)
+{
+  struct proc *p;
+  struct cpu *c = mycpu();
+  c->proc = 0;
+  int earliestProcessSelected = 0;
+  struct proc *earliestTime; //process that come earlier
+  
+  for(;;){
+    // Enable interrupts on this processor.
+    sti();
+    earliestProcessSelected = 0;
+
+    // Loop over process table looking for process to run.
+  acquire(&ptable.lock);
+      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+        if(p->state != RUNNABLE)
+          continue;
+        if(!earliestProcessSelected){
+          earliestTime = p;
+          earliestProcessSelected = 1;
+        }
+        if(earliestTime->creation_time > p->creation_time)
+          earliestTime = p;
+
+    }
+    if(earliestProcessSelected)
+    {
+      // Switch to chosen process.  It is the process's job
+      // to release ptable.lock and then reacquire it
+      // before jumping back to us.
+      c->proc = earliestTime;
+      switchuvm(earliestTime);
+      earliestTime->state = RUNNING;
+
+      swtch(&(c->scheduler), earliestTime->context);
+      switchkvm();
+
+      // Process is done running for now.
+      // It should have changed its p->state before coming back.
+      c->proc = 0;
+    }
+  release(&ptable.lock);
+
+  }
+}
+
+//Schedulers algorithms 
+void 
 roundRobinSched(void)
 {
   struct proc *p;
@@ -360,6 +410,7 @@ roundRobinSched(void)
 
   }
 }
+
 void find_and_set_priority(int priority , int pid)
 {
   struct proc *p;
@@ -371,7 +422,6 @@ void find_and_set_priority(int priority , int pid)
     }
   }
 }
-
 
 void 
 prioritySched(void)
@@ -423,6 +473,7 @@ prioritySched(void)
 
   }
 }
+
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
@@ -437,7 +488,8 @@ scheduler(void)
   // if(scheduler_algorithm == ROUND_ROBIN)
   //   roundRobinSched();
   // roundRobinSched();
-  prioritySched();
+  // prioritySched();
+  FCFSSched();
 }
 
 // Enter scheduler.  Must hold only ptable.lock

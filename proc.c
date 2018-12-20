@@ -356,7 +356,6 @@ FCFSSched(void)
       return earliestTime;
     }
   return 0;
-  
 }
 
 //Schedulers algorithms 
@@ -518,7 +517,7 @@ prioritySched(void)
 void 
 find_and_set_sched_qeue(int qeue_number, int pid)
 {
-   struct proc *p;
+  struct proc *p;
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(pid == p->pid)
     {
@@ -527,6 +526,17 @@ find_and_set_sched_qeue(int qeue_number, int pid)
     }
   }
 }
+
+void
+show_all_processes_scheduling()
+{
+  // struct proc *p;
+  cprintf("name    pid    state    state    queue    priority    lottery    createTime\n");
+  // for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    
+  // }
+}
+
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.

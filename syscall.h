@@ -40,4 +40,5 @@
 #define SYS_set_priority 37
 #define SYS_set_lottery_ticket 38
 #define SYS_set_sched_qeue 39
+#define SYS_show_processes_scheduling 40
 

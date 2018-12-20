@@ -43,6 +43,8 @@ int select_sched(int sched);
 int set_priority(int p, int pid);
 int set_lottery_ticket(int l, int pid);
 int set_sched_qeue(int q, int pid);
+int show_processes_scheduling();
+
 enum schedAlgorithms { ROUND_ROBIN , PRIORITY , FCFS , LOTTERY};
 
 // ulib.c

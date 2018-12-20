@@ -124,6 +124,7 @@ extern int sys_select_sched(void);
 extern int sys_set_priority(void);
 extern int sys_set_lottery_ticket(void);
 extern int sys_set_sched_qeue(void);
+extern int sys_show_processes_scheduling(void);
 
 
 
@@ -167,6 +168,7 @@ static int (*syscalls[])(void) = {
 [SYS_set_priority] sys_set_priority,
 [SYS_set_lottery_ticket] sys_set_lottery_ticket,
 [SYS_set_sched_qeue] sys_set_sched_qeue,
+[SYS_show_processes_scheduling] sys_show_processes_scheduling,
 
 
 

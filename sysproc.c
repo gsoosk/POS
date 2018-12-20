@@ -330,3 +330,8 @@ void sys_set_sched_qeue()
   argint(1, &pid);
   find_and_set_sched_qeue(qeue_number, pid);
 }
+
+void sys_show_processes_scheduling()
+{
+  show_all_processes_scheduling();
+}

@@ -9,6 +9,7 @@ void priorityTest();
 void FCFSTest();
 void lotteryTest();
 void multilevelQueue();
+void showProcessScheduling();
 
 int main(int argc, char const *argv[])
 {
@@ -16,7 +17,8 @@ int main(int argc, char const *argv[])
     printf(1, "1. Priority \n");
     printf(1 ,"2. FCFS \n");
     printf(1 ,"3. lottery \n");
-    printf(1, "4.multi-level queue\n");
+    printf(1, "4. multi-level queue\n");
+    printf(1, "5. show processes scheduling state\n");
     char buf[1024];
     
     while(read(1, buf, 1024))
@@ -36,6 +38,9 @@ int main(int argc, char const *argv[])
             multilevelQueue();
             break;
         }
+        else if(atoi(buf) == 5){
+            showProcessScheduling();
+        }
         else
             printf(1, "enter a valid number please.\n");
     }
@@ -43,6 +48,12 @@ int main(int argc, char const *argv[])
 
     exit();
 }
+
+void showProcessScheduling()
+{
+    show_processes_scheduling();
+}
+
 void priorityTest()
 {
   set_sched_qeue(PRIORITY, getpid());

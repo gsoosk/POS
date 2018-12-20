@@ -41,6 +41,7 @@ int wrtest(uint pattern);
 //part 4 : sched
 int select_sched(int sched);
 int set_priority(int p, int pid);
+int set_lottery_ticket(int l, int pid);
 
 // ulib.c
 int stat(const char*, struct stat*);

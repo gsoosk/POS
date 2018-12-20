@@ -7,7 +7,7 @@
 #include "proc.h"
 #include "spinlock.h"
 #include "syscall.h"
-int scheduler_algorithm = FCFS;
+int scheduler_algorithm = LOTTERY;
 
 struct {
   struct spinlock lock;
@@ -115,6 +115,7 @@ found:
   p->context->eip = (uint)forkret;
   //for using in FCFS scheduling algorithm
   p->creation_time = ticks;
+  p->lottery_ticket = 1;
   return p;
 }
 
@@ -411,6 +412,57 @@ roundRobinSched(void)
   }
 }
 
+//Schedulers algorithms 
+void 
+lotterySched(void){
+  struct proc *p;
+  struct cpu *c = mycpu();
+  c->proc = 0;
+ 
+  int lotteryProcessSelected = 0;
+  struct proc *highLottery_ticket; //process with highest lottery ticket
+  for(;;){
+    // Enable interrupts on this processor.
+    lotteryProcessSelected = 0;
+    sti();
+    
+    // Loop over process table looking for process to run.
+    acquire(&ptable.lock);
+    
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state != RUNNABLE)
+        continue;
+
+      if(!lotteryProcessSelected)
+      {
+        highLottery_ticket = p;
+        lotteryProcessSelected = 1;
+      }
+      if(highLottery_ticket->lottery_ticket > p->lottery_ticket )
+        highLottery_ticket = p;
+    }
+    if(lotteryProcessSelected )
+    {
+      // Switch to chosen process.  It is the process's job
+      // to release ptable.lock and then reacquire it
+      // before jumping back to us.
+      c->proc = highLottery_ticket;
+      switchuvm(highLottery_ticket);
+      highLottery_ticket->state = RUNNING;
+
+      swtch(&(c->scheduler), highLottery_ticket->context);
+      switchkvm();
+
+      // Process is done running for now.
+      // It should have changed its p->state before coming back.
+      c->proc = 0;
+    }
+    
+    release(&ptable.lock);
+
+  } 
+}
+
 void find_and_set_priority(int priority , int pid)
 {
   struct proc *p;
@@ -418,6 +470,17 @@ void find_and_set_priority(int priority , int pid)
     if(pid == p->pid)
     {
       p -> priority = priority;
+      break;
+    }
+  }
+}
+
+void find_and_set_lottery_ticket(int lottery_ticket , int pid){
+  struct proc *p;
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(pid == p->pid)
+    {
+      p -> lottery_ticket = lottery_ticket;
       break;
     }
   }

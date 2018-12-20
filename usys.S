@@ -47,3 +47,4 @@ SYSCALL(wrtest)
 
 SYSCALL(set_priority)
 SYSCALL(select_sched)
+SYSCALL(set_lottery_ticket)

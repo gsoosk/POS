@@ -128,9 +128,11 @@ void            yield(void);
 void            roundRobinSched(void) __attribute__((noreturn));
 void            FCFSSched(void) __attribute__((noreturn));
 void            prioritySched(void) __attribute__((noreturn));
+void            lotterySched(void) __attribute__((noreturn));
 void            find_and_set_priority(int priority, int pid);
+void            find_and_set_lottery_ticket(int lottery_ticket , int pid);
 extern int      scheduler_algorithm;
-enum schedAlgorithms { ROUND_ROBIN , PRIORITY , FCFS};
+enum schedAlgorithms { ROUND_ROBIN , PRIORITY , FCFS , LOTTERY};
 
 
 // swtch.S

@@ -313,3 +313,11 @@ void sys_set_priority()
   argint(1, &pid);
   find_and_set_priority(priority, pid);
 }
+
+void sys_set_lottery_ticket(){
+  int lottery_ticket;
+  argint(0, &lottery_ticket);
+  int pid;
+  argint(1, &pid);
+  find_and_set_lottery_ticket(lottery_ticket , pid);
+}

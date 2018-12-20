@@ -364,6 +364,7 @@ FCFSSched(void)
       switchuvm(earliestTime);
       earliestTime->state = RUNNING;
 
+      cprintf("pointer %d\n", earliestTime->pid);
       swtch(&(c->scheduler), earliestTime->context);
       switchkvm();
 
@@ -419,7 +420,6 @@ int generate_random(int toMod)
   acquire(&tickslock);
   random = ticks % toMod;
   release(&tickslock);
-  // cprintf("%d\n", random);
   return random;
 }
 
@@ -430,14 +430,15 @@ lotterySched(void){
   struct cpu *c = mycpu();
   c->proc = 0;
  
-  int sum_lotteries = 0;
+  int sum_lotteries = 1;
   int random_ticket = 0;
   int isLotterySelected = 0;
+  int toPrintRandomTicket = 0;
   struct proc *highLottery_ticket; //process with highest lottery ticket
   for(;;){
     // Enable interrupts on this processor.
     sti();
-    sum_lotteries = 0;
+    sum_lotteries = 1;
     isLotterySelected = 0;
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
@@ -448,7 +449,8 @@ lotterySched(void){
     }
 
     random_ticket = generate_random(sum_lotteries);
-    cprintf("highLottery before for : %d", highLottery_ticket);
+    toPrintRandomTicket = random_ticket;
+    
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
@@ -458,7 +460,10 @@ lotterySched(void){
       if(!isLotterySelected) {
         highLottery_ticket = p;
         isLotterySelected = 1;
+       
       }
+
+      cprintf("pid : %d - lottery : %d\n", p->pid, p->lottery_ticket);
 
       if(random_ticket <= 0 && isLotterySelected == 1)
       {
@@ -466,20 +471,20 @@ lotterySched(void){
         isLotterySelected = 2;
       }
     }
-    cprintf("highLottery after for : %d", highLottery_ticket);
+   
     if(isLotterySelected != 0) {
+  
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
-      // cprintf("pid : %d - lottery : %d\n", highLottery_ticket->pid, highLottery_ticket->lottery_ticket);
+      cprintf("random number is %d\n", toPrintRandomTicket);                
       c->proc = highLottery_ticket;
       switchuvm(highLottery_ticket);
       highLottery_ticket->state = RUNNING;
 
-      cprintf("high priority : %l\n", highLottery_ticket);
       swtch(&(c->scheduler), highLottery_ticket->context);
       switchkvm();
-
+      
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;

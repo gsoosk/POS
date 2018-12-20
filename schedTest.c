@@ -10,7 +10,8 @@ int main(int argc, char const *argv[])
 {
     printf(1, "Which sched do you want to test ? \n");
     printf(1, "1. Priority \n");
-    printf(1 , "2. FCFS \n");
+    printf(1 ,"2. FCFS \n");
+    printf(1 ,"3. lottery \n");
     char buf[1024];
     
     while(read(1, buf, 1024))
@@ -24,6 +25,7 @@ int main(int argc, char const *argv[])
             break;
         }else if(atoi(buf) == 3){
             lotteryTest();
+            break;
         }
         else
             printf(1, "enter a valid number please.\n");
@@ -138,7 +140,7 @@ void lotteryTest(){
             pid = fork();
             if(pid > 0)
             {
-            set_lottery_ticket(10-i, pid);
+                set_lottery_ticket(10-i, pid);
             }
             if(pid < 0 )
                 break;

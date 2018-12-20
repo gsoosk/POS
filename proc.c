@@ -7,6 +7,7 @@
 #include "proc.h"
 #include "spinlock.h"
 #include "syscall.h"
+
 int scheduler_algorithm = LOTTERY;
 
 struct {
@@ -412,6 +413,16 @@ roundRobinSched(void)
   }
 }
 
+int generate_random(int toMod)
+{
+  int random;
+  acquire(&tickslock);
+  random = ticks % toMod;
+  release(&tickslock);
+  cprintf("%d\n", random);
+  return random;
+}
+
 //Schedulers algorithms 
 void 
 lotterySched(void){
@@ -419,44 +430,48 @@ lotterySched(void){
   struct cpu *c = mycpu();
   c->proc = 0;
  
-  int lotteryProcessSelected = 0;
+  int sum_lotteries = 0;
+  int random_ticket = 0;
   struct proc *highLottery_ticket; //process with highest lottery ticket
   for(;;){
     // Enable interrupts on this processor.
-    lotteryProcessSelected = 0;
     sti();
-    
+    sum_lotteries = 0;
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state != RUNNABLE)
+        continue;
+      sum_lotteries += p->lottery_ticket;
+    }
+
+    random_ticket = generate_random(sum_lotteries);
     
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
+      
+      random_ticket -= p->lottery_ticket;
 
-      if(!lotteryProcessSelected)
+      if(random_ticket <= 0)
       {
         highLottery_ticket = p;
-        lotteryProcessSelected = 1;
+        break;
       }
-      if(highLottery_ticket->lottery_ticket > p->lottery_ticket )
-        highLottery_ticket = p;
     }
-    if(lotteryProcessSelected )
-    {
-      // Switch to chosen process.  It is the process's job
-      // to release ptable.lock and then reacquire it
-      // before jumping back to us.
-      c->proc = highLottery_ticket;
-      switchuvm(highLottery_ticket);
-      highLottery_ticket->state = RUNNING;
+    // Switch to chosen process.  It is the process's job
+    // to release ptable.lock and then reacquire it
+    // before jumping back to us.
+    c->proc = highLottery_ticket;
+    switchuvm(highLottery_ticket);
+    highLottery_ticket->state = RUNNING;
 
-      swtch(&(c->scheduler), highLottery_ticket->context);
-      switchkvm();
+    swtch(&(c->scheduler), highLottery_ticket->context);
+    switchkvm();
 
-      // Process is done running for now.
-      // It should have changed its p->state before coming back.
-      c->proc = 0;
-    }
+    // Process is done running for now.
+    // It should have changed its p->state before coming back.
+    c->proc = 0;
     
     release(&ptable.lock);
 
@@ -552,7 +567,8 @@ scheduler(void)
   //   roundRobinSched();
   // roundRobinSched();
   // prioritySched();
-  FCFSSched();
+  // FCFSSched();
+  lotterySched();
 }
 
 // Enter scheduler.  Must hold only ptable.lock

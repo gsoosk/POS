@@ -176,7 +176,7 @@ int             strncmp(const char*, const char*, uint);
 char*           strncpy(char*, const char*, int);
 char*           strconcat(char* des, char*src);
 int             atoi(const char *s);
-char     *itoa_simple_helper(char *dest, int i);
+char            *itoa_simple_helper(char *dest, int i);
 char            *itoa_simple(char *dest, int i);
 // syscall.c
 int             argint(int, int*);

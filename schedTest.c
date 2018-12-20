@@ -5,7 +5,7 @@
 #define NCHILD 10
 void priorityTest();
 void FCFSTest();
-
+void lotteryTest();
 int main(int argc, char const *argv[])
 {
     printf(1, "Which sched do you want to test ? \n");
@@ -127,7 +127,7 @@ void FCFSTest(){
 }
 
 void lotteryTest(){
-
+    set_lottery_ticket(100000, getpid());
   int pid = getpid();
     
     int i;
@@ -136,7 +136,10 @@ void lotteryTest(){
         if(pid > 0)
         {
             pid = fork();
-
+            if(pid > 0)
+            {
+            set_lottery_ticket(10-i, pid);
+            }
             if(pid < 0 )
                 break;
             

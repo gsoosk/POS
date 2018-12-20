@@ -45,6 +45,7 @@ int main(int argc, char const *argv[])
 }
 void priorityTest()
 {
+  set_sched_qeue(PRIORITY, getpid());
   set_priority(0, getpid());
   int pid = getpid();
     
@@ -56,9 +57,10 @@ void priorityTest()
             pid = fork();
             if(pid > 0)
             {
+            set_sched_qeue(PRIORITY, pid);
             set_priority(10-i, pid);
             }
-            if(pid < 0 )
+            if(pid == 0 )
                 break;
             
         }
@@ -94,6 +96,7 @@ void priorityTest()
 void FCFSTest(){
 
   int pid = getpid();
+   set_sched_qeue(FCFS, getpid());
     
     int i;
     for(i = 1; i < NCHILD; i++)
@@ -101,8 +104,11 @@ void FCFSTest(){
         if(pid > 0)
         {
             pid = fork();
-
-            if(pid < 0 )
+            if(pid > 0)
+            {
+                set_sched_qeue(FCFS, pid);
+            }
+            if(pid == 0 )
                 break;
             
         }
@@ -137,6 +143,7 @@ void FCFSTest(){
 }
 
 void lotteryTest(){
+    set_sched_qeue(LOTTERY, getpid());
     set_lottery_ticket(100000, getpid());
   int pid = getpid();
     
@@ -148,9 +155,10 @@ void lotteryTest(){
             pid = fork();
             if(pid > 0)
             {
+                set_sched_qeue(LOTTERY, pid);
                 set_lottery_ticket(10-i, pid);
             }
-            if(pid < 0 )
+            if(pid == 0 )
                 break;
             
         }
@@ -186,6 +194,8 @@ void lotteryTest(){
 
 void multilevelQueue() {
     int pid = getpid();
+    set_sched_qeue(LOTTERY, getpid());
+    set_lottery_ticket(100000, getpid());
     int queue = LOTTERY;
     int i;
     for(i = 0; i < 3 * NCHILD; i++)

@@ -419,7 +419,7 @@ int generate_random(int toMod)
   acquire(&tickslock);
   random = ticks % toMod;
   release(&tickslock);
-  cprintf("%d\n", random);
+  // cprintf("%d\n", random);
   return random;
 }
 
@@ -460,17 +460,18 @@ lotterySched(void){
         isLotterySelected = 1;
       }
 
-      if(random_ticket <= 0)
+      if(random_ticket <= 0 && isLotterySelected == 1)
       {
         highLottery_ticket = p;
-        break;
+        isLotterySelected = 2;
       }
     }
 
-    if(isLotterySelected) {
+    if(isLotterySelected != 0) {
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
+      // cprintf("pid : %d - lottery : %d\n", highLottery_ticket->pid, highLottery_ticket->lottery_ticket);
       c->proc = highLottery_ticket;
       switchuvm(highLottery_ticket);
       highLottery_ticket->state = RUNNING;

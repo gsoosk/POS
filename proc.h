@@ -53,6 +53,7 @@ struct proc {
   int priority;                // Priority for priorityScheduling 
   long int creation_time;      // creat time for process using ticks
   int lottery_ticket;
+  int schedQueue;
 };
 
 // Process memory is laid out contiguously, low addresses first:

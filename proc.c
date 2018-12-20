@@ -432,11 +432,13 @@ lotterySched(void){
  
   int sum_lotteries = 0;
   int random_ticket = 0;
+  int isLotterySelected = 0;
   struct proc *highLottery_ticket; //process with highest lottery ticket
   for(;;){
     // Enable interrupts on this processor.
     sti();
     sum_lotteries = 0;
+    isLotterySelected = 0;
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
@@ -453,25 +455,33 @@ lotterySched(void){
       
       random_ticket -= p->lottery_ticket;
 
+      if(!isLotterySelected) {
+        highLottery_ticket = p;
+        isLotterySelected = 1;
+      }
+
       if(random_ticket <= 0)
       {
         highLottery_ticket = p;
         break;
       }
     }
-    // Switch to chosen process.  It is the process's job
-    // to release ptable.lock and then reacquire it
-    // before jumping back to us.
-    c->proc = highLottery_ticket;
-    switchuvm(highLottery_ticket);
-    highLottery_ticket->state = RUNNING;
 
-    swtch(&(c->scheduler), highLottery_ticket->context);
-    switchkvm();
+    if(isLotterySelected) {
+      // Switch to chosen process.  It is the process's job
+      // to release ptable.lock and then reacquire it
+      // before jumping back to us.
+      c->proc = highLottery_ticket;
+      switchuvm(highLottery_ticket);
+      highLottery_ticket->state = RUNNING;
 
-    // Process is done running for now.
-    // It should have changed its p->state before coming back.
-    c->proc = 0;
+      swtch(&(c->scheduler), highLottery_ticket->context);
+      switchkvm();
+
+      // Process is done running for now.
+      // It should have changed its p->state before coming back.
+      c->proc = 0;
+    }
     
     release(&ptable.lock);
 

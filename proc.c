@@ -117,6 +117,7 @@ found:
   //for using in FCFS scheduling algorithm
   p->creation_time = ticks;
   p->lottery_ticket = 1;
+  p->schedQueue = LOTTERY;
   return p;
 }
 
@@ -328,24 +329,19 @@ wait(void)
 }
 
 //Schedulers algorithms 
-void 
+struct proc*
 FCFSSched(void)
 {
   struct proc *p;
-  struct cpu *c = mycpu();
-  c->proc = 0;
+ 
   int earliestProcessSelected = 0;
   struct proc *earliestTime; //process that come earlier
   
-  for(;;){
-    // Enable interrupts on this processor.
-    sti();
+  
     earliestProcessSelected = 0;
 
-    // Loop over process table looking for process to run.
-  acquire(&ptable.lock);
       for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-        if(p->state != RUNNABLE)
+        if(p->state != RUNNABLE || p->schedQueue != FCFS)
           continue;
         if(!earliestProcessSelected){
           earliestTime = p;
@@ -357,24 +353,10 @@ FCFSSched(void)
     }
     if(earliestProcessSelected)
     {
-      // Switch to chosen process.  It is the process's job
-      // to release ptable.lock and then reacquire it
-      // before jumping back to us.
-      c->proc = earliestTime;
-      switchuvm(earliestTime);
-      earliestTime->state = RUNNING;
-
-      cprintf("pointer %d\n", earliestTime->pid);
-      swtch(&(c->scheduler), earliestTime->context);
-      switchkvm();
-
-      // Process is done running for now.
-      // It should have changed its p->state before coming back.
-      c->proc = 0;
+      return earliestTime;
     }
-  release(&ptable.lock);
-
-  }
+  return 0;
+  
 }
 
 //Schedulers algorithms 
@@ -424,75 +406,57 @@ int generate_random(int toMod)
 }
 
 //Schedulers algorithms 
-void 
+
+struct proc*
 lotterySched(void){
   struct proc *p;
-  struct cpu *c = mycpu();
-  c->proc = 0;
+  
  
   int sum_lotteries = 1;
   int random_ticket = 0;
   int isLotterySelected = 0;
-  int toPrintRandomTicket = 0;
   struct proc *highLottery_ticket; //process with highest lottery ticket
-  for(;;){
-    // Enable interrupts on this processor.
-    sti();
-    sum_lotteries = 1;
-    isLotterySelected = 0;
-    // Loop over process table looking for process to run.
-    acquire(&ptable.lock);
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
-        continue;
-      sum_lotteries += p->lottery_ticket;
-    }
+  
+  // Enable interrupts on this processor.
+  sum_lotteries = 1;
+  isLotterySelected = 0;
+  // Loop over process table looking for process to run.
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->state != RUNNABLE || p->schedQueue != LOTTERY)
+      continue;
+    sum_lotteries += p->lottery_ticket;
+  }
 
-    random_ticket = generate_random(sum_lotteries);
-    toPrintRandomTicket = random_ticket;
+  random_ticket = generate_random(sum_lotteries);
+  
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->state != RUNNABLE || p->schedQueue != LOTTERY)
+      continue;
     
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
-        continue;
+    random_ticket -= p->lottery_ticket;
+
+    if(!isLotterySelected) {
+      highLottery_ticket = p;
+      isLotterySelected = 1;
       
-      random_ticket -= p->lottery_ticket;
-
-      if(!isLotterySelected) {
-        highLottery_ticket = p;
-        isLotterySelected = 1;
-       
-      }
-
-      cprintf("pid : %d - lottery : %d\n", p->pid, p->lottery_ticket);
-
-      if(random_ticket <= 0 && isLotterySelected == 1)
-      {
-        highLottery_ticket = p;
-        isLotterySelected = 2;
-      }
     }
+
+    if(random_ticket <= 0 && isLotterySelected == 1)
+    {
+      highLottery_ticket = p;
+      isLotterySelected = 2;
+    }
+  }
    
     if(isLotterySelected != 0) {
-  
-      // Switch to chosen process.  It is the process's job
-      // to release ptable.lock and then reacquire it
-      // before jumping back to us.
-      cprintf("random number is %d\n", toPrintRandomTicket);                
-      c->proc = highLottery_ticket;
-      switchuvm(highLottery_ticket);
-      highLottery_ticket->state = RUNNING;
-
-      swtch(&(c->scheduler), highLottery_ticket->context);
-      switchkvm();
       
-      // Process is done running for now.
-      // It should have changed its p->state before coming back.
-      c->proc = 0;
+      return highLottery_ticket;
     }
     
-    release(&ptable.lock);
+    
+    return 0;
 
-  } 
+  
 }
 
 void find_and_set_priority(int priority , int pid)
@@ -518,57 +482,51 @@ void find_and_set_lottery_ticket(int lottery_ticket , int pid){
   }
 }
 
-void 
+struct proc*
 prioritySched(void)
 {
   struct proc *p;
-  struct cpu *c = mycpu();
-  c->proc = 0;
+  
  
   int priorityProcessSelected = 0;
   struct proc *highPriority; //process with highest priority
-  for(;;){
-    // Enable interrupts on this processor.
-    priorityProcessSelected = 0;
-    sti();
-    
-    // Loop over process table looking for process to run.
-    acquire(&ptable.lock);
-    
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
-        continue;
+  // Enable interrupts on this processor.
+  priorityProcessSelected = 0;
 
-      if(!priorityProcessSelected)
-      {
-        highPriority = p;
-        priorityProcessSelected = 1;
-      }
-      if(highPriority->priority > p->priority )
-        highPriority = p;
-    }
-    if(priorityProcessSelected )
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->state != RUNNABLE || p->schedQueue != PRIORITY)
+      continue;
+
+    if(!priorityProcessSelected)
     {
-      // Switch to chosen process.  It is the process's job
-      // to release ptable.lock and then reacquire it
-      // before jumping back to us.
-      c->proc = highPriority;
-      switchuvm(highPriority);
-      highPriority->state = RUNNING;
-
-      swtch(&(c->scheduler), highPriority->context);
-      switchkvm();
-
-      // Process is done running for now.
-      // It should have changed its p->state before coming back.
-      c->proc = 0;
+      highPriority = p;
+      priorityProcessSelected = 1;
     }
-    
-    release(&ptable.lock);
-
+    if(highPriority->priority > p->priority )
+      highPriority = p;
   }
+  if(priorityProcessSelected )
+  {
+    
+    return highPriority;
+  }
+  
+  return 0;
+
 }
 
+void 
+find_and_set_sched_qeue(int qeue_number, int pid)
+{
+   struct proc *p;
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(pid == p->pid)
+    {
+      p -> schedQueue = qeue_number;
+      break;
+    }
+  }
+}
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
@@ -580,12 +538,40 @@ prioritySched(void)
 void
 scheduler(void)
 {
-  // if(scheduler_algorithm == ROUND_ROBIN)
-  //   roundRobinSched();
-  // roundRobinSched();
-  // prioritySched();
-  // FCFSSched();
-  lotterySched();
+  struct proc *p;  
+  struct cpu *c = mycpu();
+  c->proc = 0;
+  for(;;){
+    // Enable interrupts on this processor.
+    sti();
+    // Loop over process table looking for process to run.
+    acquire(&ptable.lock);
+    p = lotterySched();
+    if(p == 0)
+      p = FCFSSched();
+    if(p == 0)
+      p = prioritySched();
+    if(p !=0 ) {
+      // Switch to chosen process.  It is the process's job
+      // to release ptable.lock and then reacquire it
+      // before jumping back to us.
+      c->proc = p;
+      switchuvm(p);
+      p->state = RUNNING;
+
+      swtch(&(c->scheduler), p->context);
+      switchkvm();
+
+      // Process is done running for now.
+      // It should have changed its p->state before coming back.
+      c->proc = 0;
+    }
+    
+
+    release(&ptable.lock);
+  }
+
+
 }
 
 // Enter scheduler.  Must hold only ptable.lock

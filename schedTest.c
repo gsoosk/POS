@@ -2,16 +2,21 @@
 #include "stat.h"
 #include "fcntl.h" // for using file defines
 #include "user.h" // for using from strlen
-#define NCHILD 10
+
+#define NCHILD 5
+
 void priorityTest();
 void FCFSTest();
 void lotteryTest();
+void multilevelQueue();
+
 int main(int argc, char const *argv[])
 {
     printf(1, "Which sched do you want to test ? \n");
     printf(1, "1. Priority \n");
     printf(1 ,"2. FCFS \n");
     printf(1 ,"3. lottery \n");
+    printf(1, "4.multi-level queue\n");
     char buf[1024];
     
     while(read(1, buf, 1024))
@@ -25,6 +30,10 @@ int main(int argc, char const *argv[])
             break;
         }else if(atoi(buf) == 3){
             lotteryTest();
+            break;
+        }
+        else if(atoi(buf) == 4){
+            multilevelQueue();
             break;
         }
         else
@@ -53,7 +62,6 @@ void priorityTest()
                 break;
             
         }
-            
     }
        
     if(pid < 0)
@@ -122,7 +130,7 @@ void FCFSTest(){
     else
     {
         int i;
-        for(i = 0; i < NCHILD; i++)
+        for(i = 0; i < NCHILD + 1; i++)
             wait();
         printf(1, "Main user program finished fucking pid %d\n", getpid());
     }
@@ -175,3 +183,76 @@ void lotteryTest(){
         printf(1, "Main user program finished fucking pid %d\n", getpid());
     }
 }
+
+void multilevelQueue() {
+    int pid = getpid();
+    int queue = LOTTERY;
+    int i;
+    for(i = 0; i < 3 * NCHILD; i++)
+    {
+        if(pid > 0)
+        {
+            pid = fork();
+            if(pid > 0)
+            { 
+                if(i < NCHILD)
+                {
+                    set_sched_qeue(PRIORITY, pid);
+                    set_priority(NCHILD * 3 - i, pid);
+                }
+                else if( i < NCHILD * 2)
+                {
+                    set_sched_qeue(FCFS, pid);
+                }
+                else if( i < NCHILD * 3)
+                {
+                    set_sched_qeue(LOTTERY, pid);
+                    set_lottery_ticket(NCHILD * 3 - i, pid);
+                }
+                
+            }
+            if(pid == 0 )
+            {
+                queue = i < NCHILD ? PRIORITY : i < NCHILD * 2 ? FCFS : LOTTERY;
+                break;
+            }
+        }
+            
+    }
+       
+    if(pid < 0)
+    {
+        printf(2, "fork error\n");
+    }
+    else if(pid == 0 && (queue == LOTTERY || queue == FCFS))
+    {
+        
+        int ownPid;
+        ownPid = getpid();
+        int i;
+        for(i = 0 ; i < 20000 ; i++)
+        {
+            delay(200000000);
+        }
+        
+        printf(1, "%d\n", ownPid);
+
+    }
+    else if(pid == 0 && queue == PRIORITY)
+    {
+        
+        int ownPid;
+        ownPid = getpid();
+        printf(1, "%d\n", ownPid);
+        printf(1, "THIS IS A IO FOR TESTING IO BOUND PROCESS \n");
+    }
+    else
+    {
+        int i;
+        for(i = 0; i < NCHILD * 3 ; i++)
+            wait();
+        printf(1, "Main user program finished fucking pid %d\n", getpid());
+    }
+}
+
+

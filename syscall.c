@@ -123,6 +123,7 @@ extern int sys_wrtest(void);
 extern int sys_select_sched(void);
 extern int sys_set_priority(void);
 extern int sys_set_lottery_ticket(void);
+extern int sys_set_sched_qeue(void);
 
 
 
@@ -164,7 +165,9 @@ static int (*syscalls[])(void) = {
 [SYS_wrtest] sys_wrtest,
 [SYS_select_sched] sys_select_sched,
 [SYS_set_priority] sys_set_priority,
-[SYS_set_lottery_ticket] sys_set_lottery_ticket
+[SYS_set_lottery_ticket] sys_set_lottery_ticket,
+[SYS_set_sched_qeue] sys_set_sched_qeue,
+
 
 
 };

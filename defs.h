@@ -126,11 +126,12 @@ int             wait(void);
 void            wakeup(void*);
 void            yield(void);
 void            roundRobinSched(void) __attribute__((noreturn));
-void            FCFSSched(void) __attribute__((noreturn));
-void            prioritySched(void) __attribute__((noreturn));
-void            lotterySched(void) __attribute__((noreturn));
+struct proc*    FCFSSched(void);
+struct proc*    prioritySched(void);
+struct proc*    lotterySched(void);
 void            find_and_set_priority(int priority, int pid);
 void            find_and_set_lottery_ticket(int lottery_ticket , int pid);
+void            find_and_set_sched_qeue(int qeue_number, int pid);
 extern int      scheduler_algorithm;
 enum schedAlgorithms { ROUND_ROBIN , PRIORITY , FCFS , LOTTERY};
 

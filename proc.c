@@ -448,7 +448,7 @@ lotterySched(void){
     }
 
     random_ticket = generate_random(sum_lotteries);
-    
+    cprintf("highLottery before for : %d", highLottery_ticket);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
@@ -466,7 +466,7 @@ lotterySched(void){
         isLotterySelected = 2;
       }
     }
-
+    cprintf("highLottery after for : %d", highLottery_ticket);
     if(isLotterySelected != 0) {
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
@@ -476,6 +476,7 @@ lotterySched(void){
       switchuvm(highLottery_ticket);
       highLottery_ticket->state = RUNNING;
 
+      cprintf("high priority : %l\n", highLottery_ticket);
       swtch(&(c->scheduler), highLottery_ticket->context);
       switchkvm();
 

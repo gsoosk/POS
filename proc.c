@@ -530,11 +530,21 @@ find_and_set_sched_qeue(int qeue_number, int pid)
 void
 show_all_processes_scheduling()
 {
-  // struct proc *p;
-  cprintf("name    pid    state    state    queue    priority    lottery    createTime\n");
-  // for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    
-  // }
+  struct proc *p;
+  cprintf("name      pid      state      queue      priority      lottery      createTime\n");
+  cprintf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->pid == 0)
+      continue;
+    cprintf("%s  ", p->name);
+    cprintf("%d  ", p->pid);
+    cprintf("%d  ", p->state);
+    cprintf("%d  ", p->schedQueue);
+    cprintf("%d  ", p->priority);
+    cprintf("%d  ", p->lottery_ticket);
+    cprintf("%d  ", p->creation_time);
+    cprintf("\n");
+  }
 }
 
 //PAGEBREAK: 42

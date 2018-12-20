@@ -40,6 +40,7 @@ int main(int argc, char const *argv[])
         }
         else if(atoi(buf) == 5){
             showProcessScheduling();
+            break;
         }
         else
             printf(1, "enter a valid number please.\n");
@@ -251,7 +252,7 @@ void multilevelQueue() {
         int ownPid;
         ownPid = getpid();
         int i;
-        for(i = 0 ; i < 20000 ; i++)
+        for(i = 0 ; i < 10000 ; i++)
         {
             delay(200000000);
         }
@@ -270,6 +271,7 @@ void multilevelQueue() {
     else
     {
         int i;
+        showProcessScheduling();
         for(i = 0; i < NCHILD * 3 ; i++)
             wait();
         printf(1, "Main user program finished fucking pid %d\n", getpid());

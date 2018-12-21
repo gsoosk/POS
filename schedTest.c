@@ -88,7 +88,7 @@ void priorityTest()
         int ownPid;
         ownPid = getpid();
         int i;
-        for(i = 0 ; i < 20000 ; i++)
+        for(i = 0 ; i < 200000 ; i++)
         {
             delay(200000000);
         }

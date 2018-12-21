@@ -18,6 +18,7 @@ struct {
 static struct proc *initproc;
 
 int nextpid = 1;
+int createdProcess = 1;
 extern void forkret(void);
 extern void trapret(void);
 
@@ -116,7 +117,7 @@ found:
   p->context->eip = (uint)forkret;
   //for using in FCFS scheduling algorithm
   acquire(&tickslock);
-  p->creation_time = ticks++;
+  p->creation_time = ticks + createdProcess++;
   release(&tickslock);
   p->lottery_ticket = 1;
   p->schedQueue = LOTTERY;

@@ -530,21 +530,94 @@ find_and_set_sched_qeue(int qeue_number, int pid)
   }
 }
 
+char* print_state(int state){
+  if(state == 0){
+    return "UNUSED";
+  }else if(state == 1){
+    return "EMBRYO";
+  }else if(state == 2){
+    return "SLEEPING";
+  }else if(state == 3){
+    return "RUNNABLE";
+  }else if(state == 4){
+    return "RUNNING";
+  }else if(state == 5){
+    return "ZOMBIE";
+  }else{
+    return "";
+  }
+}
+
+int int_size(int i){
+    if( i >= 1000000000) return 10;
+    if( i >= 100000000)  return 9;
+    if( i >= 10000000)   return 8;
+    if( i >= 1000000)    return 7;
+    if( i >= 100000)     return 6;
+    if( i >= 10000)      return 5;
+    if( i >= 1000)       return 4;
+    if( i >= 100)        return 3;
+    if( i >= 10)         return 2;
+                        return 1;
+}
+
 void
 show_all_processes_scheduling()
 {
   struct proc *p;
-  cprintf("name      pid      state      queue      priority      lottery      createTime\n");
+  int name_spaces = 0;
+  int i = 0 ;
+  char* state;
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->pid == 0)
+      continue;
+    if( name_spaces < strlen(p->name))
+      name_spaces = strlen(p->name);
+  }
+
+  cprintf("name");
+  for(i = 0 ; i < name_spaces - strlen("name") + 3 ; i++)
+    cprintf(" ");
+  
+  cprintf("pid");
+  for(i = 0 ; i < 4; i++)
+    cprintf(" ");
+  cprintf("state");
+  for(i = 0 ; i < 6; i++)
+    cprintf(" ");
+  cprintf("queue");
+  for(i = 0 ; i < 3; i++)
+    cprintf(" ");
+  cprintf("priority");
+  for(i = 0 ; i < 3; i++)
+    cprintf(" ");
+  cprintf("lottery");
+  for(i = 0 ; i < 3; i++)
+    cprintf(" ");
+  cprintf("createTime\n");
   cprintf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->pid == 0)
       continue;
-    cprintf("%s  ", p->name);
-    cprintf("%d  ", p->pid);
-    cprintf("%d  ", p->state);
+    cprintf("%s", p->name);
+    for(i = 0 ; i < name_spaces - strlen(p->name) + 4 ; i++)
+      cprintf(" ");
+    cprintf("%d", p->pid);
+    for(i = 0 ; i < 6 - int_size(p->pid); i++)
+      cprintf(" ");
+    state = print_state(p->state);
+    cprintf("%s" , state);
+    for(i = 0 ; i < 13 - strlen(state); i++)
+      cprintf(" ");
     cprintf("%d  ", p->schedQueue);
+    for(i = 0 ; i < 6 - int_size(p->schedQueue); i++)
+      cprintf(" ");
     cprintf("%d  ", p->priority);
+    for(i = 0 ; i < 8 - int_size(p->priority); i++)
+      cprintf(" ");
     cprintf("%d  ", p->lottery_ticket);
+    for(i = 0 ; i < 10 - int_size(p->lottery_ticket); i++)
+      cprintf(" ");
     cprintf("%d  ", p->creation_time);
     cprintf("\n");
   }

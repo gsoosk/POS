@@ -101,7 +101,7 @@ void priorityTest()
         int i;
         for(i = 0; i < NCHILD; i++)
             wait();
-        printf(1, "Main user program finished fucking pid %d\n", getpid());
+        printf(1, "Main user program finished pid %d\n", getpid());
     }
 }
 
@@ -150,7 +150,7 @@ void FCFSTest(){
         int i;
         for(i = 0; i < NCHILD + 1; i++)
             wait();
-        printf(1, "Main user program finished fucking pid %d\n", getpid());
+        printf(1, "Main user program finished pid %d\n", getpid());
     }
 }
 
@@ -200,7 +200,7 @@ void lotteryTest(){
         int i;
         for(i = 0; i < NCHILD; i++)
             wait();
-        printf(1, "Main user program finished fucking pid %d\n", getpid());
+        printf(1, "Main user program finished pid %d\n", getpid());
     }
 }
 
@@ -274,8 +274,6 @@ void multilevelQueue() {
         showProcessScheduling();
         for(i = 0; i < NCHILD * 3 ; i++)
             wait();
-        printf(1, "Main user program finished fucking pid %d\n", getpid());
+        printf(1, "Main user program finished pid %d\n", getpid());
     }
 }
-
-

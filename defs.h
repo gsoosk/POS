@@ -181,6 +181,7 @@ char*           strconcat(char* des, char*src);
 int             atoi(const char *s);
 char            *itoa_simple_helper(char *dest, int i);
 char            *itoa_simple(char *dest, int i);
+int             int_size(int i);
 // syscall.c
 int             argint(int, int*);
 int             argptr(int, char**, int);

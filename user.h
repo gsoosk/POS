@@ -63,5 +63,6 @@ void free(void*);
 int atoi(const char*);
 char* itoa_simple_helper(char *dest, int i);
 char* itoa_simple(char *dest, int i);
+int int_size(int i);
 
 void delay(int numberOfClocks);

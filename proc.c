@@ -9,6 +9,7 @@
 #include "syscall.h"
 
 int scheduler_algorithm = LOTTERY;
+int process_number;
 
 struct {
   struct spinlock lock;
@@ -118,6 +119,8 @@ found:
   //for using in FCFS scheduling algorithm
   acquire(&tickslock);
   p->creation_time = ticks + createdProcess++;
+  p->process_count = process_number;
+  process_number++;
   release(&tickslock);
   p->lottery_ticket = 1;
   p->schedQueue = LOTTERY;
@@ -594,7 +597,10 @@ show_all_processes_scheduling()
   cprintf("lottery");
   for(i = 0 ; i < 3; i++)
     cprintf(" ");
-  cprintf("createTime\n");
+  cprintf("createTime");
+  for(i = 0 ; i < 3; i++)
+    cprintf(" ");
+  cprintf("number\n");
   cprintf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n");
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->pid == 0)
@@ -619,6 +625,9 @@ show_all_processes_scheduling()
     for(i = 0 ; i < 10 - int_size(p->lottery_ticket); i++)
       cprintf(" ");
     cprintf("%d  ", p->creation_time);
+        for(i = 0 ; i < 10 - int_size(p->creation_time); i++)
+      cprintf(" ");
+    cprintf("%d  " , p->process_count);
     cprintf("\n");
   }
 }

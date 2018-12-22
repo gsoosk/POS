@@ -54,6 +54,7 @@ struct proc {
   long int creation_time;      // creat time for process using ticks
   int lottery_ticket;
   int schedQueue;
+  int process_count;
 };
 
 // Process memory is laid out contiguously, low addresses first:

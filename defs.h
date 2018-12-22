@@ -134,6 +134,7 @@ void            find_and_set_lottery_ticket(int lottery_ticket , int pid);
 void            find_and_set_sched_qeue(int qeue_number, int pid);
 void            show_all_processes_scheduling();
 
+extern int      process_number;
 extern int      scheduler_algorithm;
 enum schedAlgorithms { ROUND_ROBIN , PRIORITY , FCFS , LOTTERY};
 

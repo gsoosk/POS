@@ -13,8 +13,7 @@ void showProcessScheduling();
 
 int main(int argc, char const *argv[])
 {
-    set_sched_queue(LOTTERY, getpid());
-    set_lottery_ticket(500, getpid());
+    set_lottery_ticket(1000, getpid());
     multilevelQueue();
     exit();
 }
@@ -124,8 +123,6 @@ void FCFSTest(){
 }
 
 void lotteryTest(){
-    set_sched_queue(LOTTERY, getpid());
-    set_lottery_ticket(100000, getpid());
   int pid = getpid();
     
     int i;
@@ -215,19 +212,20 @@ void multilevelQueue() {
     else if(pid == 0 && (queue == LOTTERY || queue == FCFS))
     {
         int i;
-        for(i = 0 ; i < 200000 ; i++)
+        for(i = 0 ; i < 250000 ; i++)
             delay(2000000000);
+        printf(1, "pid %d finished\n", getpid());
     }
     else if(pid == 0 && queue == PRIORITY)
     {
-        int i;
-        for(i = 0 ; i < 200000 ; i++)
-            delay(2000000000);
+        printf(1, "IO bound process with pid %d finished\n", getpid());
     }
     else
     {
+        show_processes_scheduling();
         int i;
         for(i = 0; i < NCHILD * 3 ; i++)
             wait();
+        printf(1, "main program wirh pid %d finished\n", getpid());
     }
 }

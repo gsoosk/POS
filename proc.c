@@ -117,12 +117,10 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
   //for using in FCFS scheduling algorithm
-  acquire(&tickslock);
   p->creation_time = ticks + createdProcess++;
   p->process_count = process_number;
   process_number++;
-  release(&tickslock);
-  p->lottery_ticket = 1;
+  p->lottery_ticket = 100000;
   p->schedQueue = LOTTERY;
   return p;
 }
@@ -232,9 +230,7 @@ fork(void)
   release(&ptable.lock);
   np->count++;
   curproc->count++;
-  
-  // if(scheduler_algorithm == PRIORITY)
-  //   yield();
+
   return pid;
 }
 
@@ -404,9 +400,7 @@ roundRobinSched(void)
 int generate_random(int toMod)
 {
   int random;
-  acquire(&tickslock);
   random = ticks % toMod;
-  release(&tickslock);
   return random;
 }
 
@@ -415,14 +409,12 @@ int generate_random(int toMod)
 struct proc*
 lotterySched(void){
   struct proc *p;
-  
- 
+
   int sum_lotteries = 1;
   int random_ticket = 0;
   int isLotterySelected = 0;
   struct proc *highLottery_ticket = 0; //process with highest lottery ticket
   
-  // Enable interrupts on this processor.
   sum_lotteries = 1;
   isLotterySelected = 0;
   // Loop over process table looking for process to run.
@@ -454,7 +446,6 @@ lotterySched(void){
   }
    
     if(isLotterySelected != 0) {
-      
       return highLottery_ticket;
     }
     

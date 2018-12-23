@@ -6,6 +6,7 @@
 
 int main(int argc, char const *argv[])
 {
+    printf(1, "ps excuting\n");
     show_processes_scheduling();
     exit();
 }

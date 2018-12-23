@@ -13,40 +13,9 @@ void showProcessScheduling();
 
 int main(int argc, char const *argv[])
 {
-    printf(1, "Which sched do you want to test ? \n");
-    printf(1, "1. Priority \n");
-    printf(1 ,"2. FCFS \n");
-    printf(1 ,"3. lottery \n");
-    printf(1, "4. multi-level queue\n");
-    printf(1, "5. show processes scheduling state\n");
-    char buf[1024];
-    
-    while(read(1, buf, 1024))
-    {
-        if(atoi(buf) == 1){
-            priorityTest();
-            break;
-
-        }else if(atoi(buf) == 2){
-            FCFSTest();
-            break;
-        }else if(atoi(buf) == 3){
-            lotteryTest();
-            break;
-        }
-        else if(atoi(buf) == 4){
-            multilevelQueue();
-            break;
-        }
-        else if(atoi(buf) == 5){
-            showProcessScheduling();
-            break;
-        }
-        else
-            printf(1, "enter a valid number please.\n");
-    }
-   
-
+    set_sched_queue(LOTTERY, getpid());
+    set_lottery_ticket(500, getpid());
+    multilevelQueue();
     exit();
 }
 
@@ -187,9 +156,9 @@ void lotteryTest(){
         int ownPid;
         ownPid = getpid();
         int i;
-        for(i = 0 ; i < 20000 ; i++)
+        for(i = 0 ; i < 20000000 ; i++)
         {
-            delay(200000000);
+            delay(2000000000);
         }
         
         printf(1, "%d\n", ownPid);
@@ -200,14 +169,11 @@ void lotteryTest(){
         int i;
         for(i = 0; i < NCHILD; i++)
             wait();
-        printf(1, "Main user program finished pid %d\n", getpid());
     }
 }
 
 void multilevelQueue() {
     int pid = getpid();
-    set_sched_queue(LOTTERY, getpid());
-    set_lottery_ticket(100000, getpid());
     int queue = LOTTERY;
     int i;
     for(i = 0; i < 3 * NCHILD; i++)
@@ -248,32 +214,20 @@ void multilevelQueue() {
     }
     else if(pid == 0 && (queue == LOTTERY || queue == FCFS))
     {
-        
-        int ownPid;
-        ownPid = getpid();
         int i;
-        for(i = 0 ; i < 10000 ; i++)
-        {
-            delay(200000000);
-        }
-        
-        printf(1, "%d\n", ownPid);
-
+        for(i = 0 ; i < 200000 ; i++)
+            delay(2000000000);
     }
     else if(pid == 0 && queue == PRIORITY)
     {
-        
-        int ownPid;
-        ownPid = getpid();
-        printf(1, "%d\n", ownPid);
-        printf(1, "THIS IS A IO FOR TESTING IO BOUND PROCESS \n");
+        int i;
+        for(i = 0 ; i < 200000 ; i++)
+            delay(2000000000);
     }
     else
     {
         int i;
-        showProcessScheduling();
         for(i = 0; i < NCHILD * 3 ; i++)
             wait();
-        printf(1, "Main user program finished pid %d\n", getpid());
     }
 }

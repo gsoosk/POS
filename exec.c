@@ -22,6 +22,9 @@ exec(char *path, char **argv)
   //For testing priority
   begin_op();
 
+  find_and_set_sched_queue(LOTTERY, curproc->pid);
+  find_and_set_lottery_ticket(100000, curproc->pid);
+
   if((ip = namei(path)) == 0){
     end_op();
     cprintf("exec: fail\n");

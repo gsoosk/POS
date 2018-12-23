@@ -233,8 +233,8 @@ fork(void)
   np->count++;
   curproc->count++;
   
-  if(scheduler_algorithm == PRIORITY)
-    yield();
+  // if(scheduler_algorithm == PRIORITY)
+  //   yield();
   return pid;
 }
 

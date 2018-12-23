@@ -120,7 +120,7 @@ found:
   p->creation_time = ticks + createdProcess++;
   p->process_count = process_number;
   process_number++;
-  p->lottery_ticket = 100000;
+  p->lottery_ticket = 50;
   p->schedQueue = LOTTERY;
   return p;
 }
@@ -400,7 +400,7 @@ roundRobinSched(void)
 int generate_random(int toMod)
 {
   int random;
-  random = ticks % toMod;
+  random = (12345678 + ticks*ticks*ticks*ticks) % toMod;
   return random;
 }
 
@@ -429,7 +429,6 @@ lotterySched(void){
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->state != RUNNABLE || p->schedQueue != LOTTERY)
       continue;
-    
     random_ticket -= p->lottery_ticket;
 
     if(!isLotterySelected) {
@@ -643,6 +642,7 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     p = lotterySched();
+    
     if(p == 0)
       p = FCFSSched();
     if(p == 0)
@@ -662,7 +662,6 @@ scheduler(void)
       // It should have changed its p->state before coming back.
       c->proc = 0;
     }
-    
 
     release(&ptable.lock);
   }

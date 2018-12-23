@@ -13,7 +13,7 @@ void showProcessScheduling();
 
 int main(int argc, char const *argv[])
 {
-    set_lottery_ticket(1000, getpid());
+    set_lottery_ticket(50, getpid());
     multilevelQueue();
     exit();
 }

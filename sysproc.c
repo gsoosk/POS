@@ -322,13 +322,13 @@ void sys_set_lottery_ticket(){
   find_and_set_lottery_ticket(lottery_ticket , pid);
 }
 
-void sys_set_sched_qeue()
+void sys_set_sched_queue()
 {
   int qeue_number;
   argint(0, &qeue_number);
   int pid;
   argint(1, &pid);
-  find_and_set_sched_qeue(qeue_number, pid);
+  find_and_set_sched_queue(qeue_number, pid);
 }
 
 void sys_show_processes_scheduling()

@@ -521,7 +521,7 @@ prioritySched(void)
 }
 
 void 
-find_and_set_sched_qeue(int qeue_number, int pid)
+find_and_set_sched_queue(int qeue_number, int pid)
 {
   struct proc *p;
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){

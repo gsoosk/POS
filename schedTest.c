@@ -57,7 +57,7 @@ void showProcessScheduling()
 
 void priorityTest()
 {
-  set_sched_qeue(PRIORITY, getpid());
+  set_sched_queue(PRIORITY, getpid());
   set_priority(0, getpid());
   int pid = getpid();
     
@@ -69,7 +69,7 @@ void priorityTest()
             pid = fork();
             if(pid > 0)
             {
-            set_sched_qeue(PRIORITY, pid);
+            set_sched_queue(PRIORITY, pid);
             set_priority(10-i, pid);
             }
             if(pid == 0 )
@@ -108,7 +108,7 @@ void priorityTest()
 void FCFSTest(){
 
   int pid = getpid();
-   set_sched_qeue(FCFS, getpid());
+   set_sched_queue(FCFS, getpid());
     
     int i;
     for(i = 1; i < NCHILD; i++)
@@ -118,7 +118,7 @@ void FCFSTest(){
             pid = fork();
             if(pid > 0)
             {
-                set_sched_qeue(FCFS, pid);
+                set_sched_queue(FCFS, pid);
             }
             if(pid == 0 )
                 break;
@@ -155,7 +155,7 @@ void FCFSTest(){
 }
 
 void lotteryTest(){
-    set_sched_qeue(LOTTERY, getpid());
+    set_sched_queue(LOTTERY, getpid());
     set_lottery_ticket(100000, getpid());
   int pid = getpid();
     
@@ -167,7 +167,7 @@ void lotteryTest(){
             pid = fork();
             if(pid > 0)
             {
-                set_sched_qeue(LOTTERY, pid);
+                set_sched_queue(LOTTERY, pid);
                 set_lottery_ticket(10-i, pid);
             }
             if(pid == 0 )
@@ -206,7 +206,7 @@ void lotteryTest(){
 
 void multilevelQueue() {
     int pid = getpid();
-    set_sched_qeue(LOTTERY, getpid());
+    set_sched_queue(LOTTERY, getpid());
     set_lottery_ticket(100000, getpid());
     int queue = LOTTERY;
     int i;
@@ -219,16 +219,16 @@ void multilevelQueue() {
             { 
                 if(i < NCHILD)
                 {
-                    set_sched_qeue(PRIORITY, pid);
+                    set_sched_queue(PRIORITY, pid);
                     set_priority(NCHILD * 3 - i, pid);
                 }
                 else if( i < NCHILD * 2)
                 {
-                    set_sched_qeue(FCFS, pid);
+                    set_sched_queue(FCFS, pid);
                 }
                 else if( i < NCHILD * 3)
                 {
-                    set_sched_qeue(LOTTERY, pid);
+                    set_sched_queue(LOTTERY, pid);
                     set_lottery_ticket(NCHILD * 3 - i, pid);
                 }
                 

@@ -57,7 +57,7 @@ sys_getpid(void)
   struct proc *curproc = myproc();
   curproc->count++;
 
-  addNewTrace(curproc -> pid, SYS_getpid, "");
+  // addNewTrace(curproc -> pid, SYS_getpid, "");
   return curproc->pid;
 }
 
@@ -72,10 +72,10 @@ sys_sbrk(void)
   if(argint(0, &n) < 0)
     return -1;
 
-  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
-  char temp[128]; 
-  addNewArgTrace(argsForTrace, itoa_simple(temp, n), "int");
-  addNewTrace(curproc -> pid, SYS_sbrk, argsForTrace);
+  // char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  // char temp[128]; 
+  // addNewArgTrace(argsForTrace, itoa_simple(temp, n), "int");
+  // addNewTrace(curproc -> pid, SYS_sbrk, argsForTrace);
 
   addr = myproc()->sz;
   if(growproc(n) < 0)

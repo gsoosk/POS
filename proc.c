@@ -554,6 +554,18 @@ int int_size(int i){
                         return 1;
 }
 
+char* find_queue_name(int queue){
+  if(queue == 1){
+    return "PRIORITY";
+  }else if(queue == 2){
+    return "FCFS";
+  }else if(queue == 3){
+    return "LOTTERY";
+  }else{
+    return "";
+  }
+}
+
 void
 show_all_processes_scheduling()
 {
@@ -561,6 +573,7 @@ show_all_processes_scheduling()
   int name_spaces = 0;
   int i = 0 ;
   char* state;
+  char* queue_name;
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->pid == 0)
       continue;
@@ -579,7 +592,7 @@ show_all_processes_scheduling()
   for(i = 0 ; i < 6; i++)
     cprintf(" ");
   cprintf("queue");
-  for(i = 0 ; i < 3; i++)
+  for(i = 0 ; i < 5; i++)
     cprintf(" ");
   cprintf("priority");
   for(i = 0 ; i < 3; i++)
@@ -603,10 +616,11 @@ show_all_processes_scheduling()
       cprintf(" ");
     state = print_state(p->state);
     cprintf("%s" , state);
-    for(i = 0 ; i < 13 - strlen(state); i++)
+    for(i = 0 ; i < 11 - strlen(state); i++)
       cprintf(" ");
-    cprintf("%d  ", p->schedQueue);
-    for(i = 0 ; i < 6 - int_size(p->schedQueue); i++)
+    queue_name =  find_queue_name(p->schedQueue);
+    cprintf("%s ", queue_name);
+    for(i = 0 ; i < 12 - strlen(queue_name); i++)
       cprintf(" ");
     cprintf("%d  ", p->priority);
     for(i = 0 ; i < 8 - int_size(p->priority); i++)

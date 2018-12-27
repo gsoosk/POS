@@ -125,6 +125,19 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
+void            roundRobinSched(void) __attribute__((noreturn));
+struct proc*    FCFSSched(void);
+struct proc*    prioritySched(void);
+struct proc*    lotterySched(void);
+void            find_and_set_priority(int priority, int pid);
+void            find_and_set_lottery_ticket(int lottery_ticket , int pid);
+void            find_and_set_sched_queue(int qeue_number, int pid);
+void            show_all_processes_scheduling();
+
+extern int      process_number;
+extern int      scheduler_algorithm;
+enum schedAlgorithms { ROUND_ROBIN , PRIORITY , FCFS , LOTTERY};
+
 
 // swtch.S
 void            swtch(struct context**, struct context*);
@@ -167,8 +180,9 @@ int             strncmp(const char*, const char*, uint);
 char*           strncpy(char*, const char*, int);
 char*           strconcat(char* des, char*src);
 int             atoi(const char *s);
-char     *itoa_simple_helper(char *dest, int i);
+char            *itoa_simple_helper(char *dest, int i);
 char            *itoa_simple(char *dest, int i);
+int             int_size(int i);
 // syscall.c
 int             argint(int, int*);
 int             argptr(int, char**, int);

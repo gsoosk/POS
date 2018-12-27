@@ -119,6 +119,13 @@ extern int sys_rwinit(void);
 extern int sys_rwtest(void);
 extern int sys_wrinit(void);
 extern int sys_wrtest(void);
+//Part 4 : sched
+extern int sys_select_sched(void);
+extern int sys_set_priority(void);
+extern int sys_set_lottery_ticket(void);
+extern int sys_set_sched_queue(void);
+extern int sys_show_processes_scheduling(void);
+
 
 
 static int (*syscalls[])(void) = {
@@ -157,6 +164,14 @@ static int (*syscalls[])(void) = {
 [SYS_rwtest] sys_rwtest,
 [SYS_wrinit] sys_wrinit,
 [SYS_wrtest] sys_wrtest,
+[SYS_select_sched] sys_select_sched,
+[SYS_set_priority] sys_set_priority,
+[SYS_set_lottery_ticket] sys_set_lottery_ticket,
+[SYS_set_sched_queue] sys_set_sched_queue,
+[SYS_show_processes_scheduling] sys_show_processes_scheduling,
+
+
+
 };
 
 void

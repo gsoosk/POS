@@ -57,7 +57,7 @@ sys_getpid(void)
   struct proc *curproc = myproc();
   curproc->count++;
 
-  addNewTrace(curproc -> pid, SYS_getpid, "");
+  // addNewTrace(curproc -> pid, SYS_getpid, "");
   return curproc->pid;
 }
 
@@ -72,10 +72,10 @@ sys_sbrk(void)
   if(argint(0, &n) < 0)
     return -1;
 
-  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
-  char temp[128]; 
-  addNewArgTrace(argsForTrace, itoa_simple(temp, n), "int");
-  addNewTrace(curproc -> pid, SYS_sbrk, argsForTrace);
+  // char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  // char temp[128]; 
+  // addNewArgTrace(argsForTrace, itoa_simple(temp, n), "int");
+  // addNewTrace(curproc -> pid, SYS_sbrk, argsForTrace);
 
   addr = myproc()->sz;
   if(growproc(n) < 0)
@@ -296,4 +296,42 @@ void sys_wrtest(void)
     //write
     performWriteFirstWritingLock(&wrt, &writeLock);
   }
+}
+
+void sys_select_sched()
+{
+  int algorithm;
+  argint(0, &algorithm);
+  scheduler_algorithm = algorithm;
+
+}
+void sys_set_priority()
+{
+  int priority;
+  argint(0, &priority);
+  int pid;
+  argint(1, &pid);
+  find_and_set_priority(priority, pid);
+}
+
+void sys_set_lottery_ticket(){
+  int lottery_ticket;
+  argint(0, &lottery_ticket);
+  int pid;
+  argint(1, &pid);
+  find_and_set_lottery_ticket(lottery_ticket , pid);
+}
+
+void sys_set_sched_queue()
+{
+  int qeue_number;
+  argint(0, &qeue_number);
+  int pid;
+  argint(1, &pid);
+  find_and_set_sched_queue(qeue_number, pid);
+}
+
+void sys_show_processes_scheduling()
+{
+  show_all_processes_scheduling();
 }

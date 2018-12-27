@@ -134,10 +134,10 @@ sys_close(void)
   struct proc *curproc = myproc();
   curproc->count++;
 
-  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
-  char temp[128]; int x; argint(0, &x);
-  addNewArgTrace(argsForTrace, itoa_simple(temp, x), "int");
-  addNewTrace(curproc -> pid, SYS_close, argsForTrace);
+  // char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  // char temp[128]; int x; argint(0, &x);
+  // addNewArgTrace(argsForTrace, itoa_simple(temp, x), "int");
+  // addNewTrace(curproc -> pid, SYS_close, argsForTrace);
 
   fileclose(f);
   return 0;
@@ -154,11 +154,11 @@ sys_fstat(void)
   if(argfd(0, 0, &f) < 0 || argptr(1, (void*)&st, sizeof(*st)) < 0)
     return -1;
   
-  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
-  char temp[128]; int x; argint(0, &x);
-  addNewArgTrace(argsForTrace, itoa_simple(temp, x), "int");
-  addNewArgTrace(argsForTrace, itoa_simple(temp, (int) st), "stat*");
-  addNewTrace(curproc -> pid, SYS_fstat, argsForTrace);
+  // char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  // char temp[128]; int x; argint(0, &x);
+  // addNewArgTrace(argsForTrace, itoa_simple(temp, x), "int");
+  // addNewArgTrace(argsForTrace, itoa_simple(temp, (int) st), "stat*");
+  // addNewTrace(curproc -> pid, SYS_fstat, argsForTrace);
 
   return filestat(f, st);
 }
@@ -176,10 +176,10 @@ sys_link(void)
   if(argstr(0, &old) < 0 || argstr(1, &new) < 0)
     return -1;
 
-  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
-  addNewArgTrace(argsForTrace, old , "char*");
-  addNewArgTrace(argsForTrace, new , "char*");
-  addNewTrace(curproc -> pid, SYS_link, argsForTrace);
+  // char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  // addNewArgTrace(argsForTrace, old , "char*");
+  // addNewArgTrace(argsForTrace, new , "char*");
+  // addNewTrace(curproc -> pid, SYS_link, argsForTrace);
 
   begin_op();
   if((ip = namei(old)) == 0){
@@ -252,9 +252,9 @@ sys_unlink(void)
   if(argstr(0, &path) < 0)
     return -1;
 
-  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
-  addNewArgTrace(argsForTrace, path, "char* ");
-  addNewTrace(curproc -> pid, SYS_unlink, argsForTrace);
+  // char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  // addNewArgTrace(argsForTrace, path, "char* ");
+  // addNewTrace(curproc -> pid, SYS_unlink, argsForTrace);
 
   begin_op();
   if((dp = nameiparent(path, name)) == 0){
@@ -360,11 +360,11 @@ sys_open(void)
   if(argstr(0, &path) < 0 || argint(1, &omode) < 0)
     return -1;
 
-  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
-  char temp[128]; 
-  addNewArgTrace(argsForTrace, itoa_simple(temp, omode), "int");
-  addNewArgTrace(argsForTrace, path, "char*");
-  addNewTrace(curproc -> pid, SYS_open, argsForTrace);
+  // char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  // char temp[128]; 
+  // addNewArgTrace(argsForTrace, itoa_simple(temp, omode), "int");
+  // addNewArgTrace(argsForTrace, path, "char*");
+  // addNewTrace(curproc -> pid, SYS_open, argsForTrace);
 
   begin_op();
 
@@ -419,9 +419,9 @@ sys_mkdir(void)
     return -1;
   }
 
-  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
-  addNewArgTrace(argsForTrace, path , "char*");
-  addNewTrace(curproc -> pid, SYS_mkdir, argsForTrace);
+  // char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  // addNewArgTrace(argsForTrace, path , "char*");
+  // addNewTrace(curproc -> pid, SYS_mkdir, argsForTrace);
 
   iunlockput(ip);
   end_op();
@@ -449,12 +449,12 @@ sys_mknod(void)
   iunlockput(ip);
   end_op();
 
-  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
-  char temp[128]; 
-  addNewArgTrace(argsForTrace, path, "char* ");
-  addNewArgTrace(argsForTrace, itoa_simple(temp, major), "int");
-  addNewArgTrace(argsForTrace, itoa_simple(temp, minor), "int");
-  addNewTrace(curproc -> pid, SYS_mknod, argsForTrace);
+  // char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  // char temp[128]; 
+  // addNewArgTrace(argsForTrace, path, "char* ");
+  // addNewArgTrace(argsForTrace, itoa_simple(temp, major), "int");
+  // addNewArgTrace(argsForTrace, itoa_simple(temp, minor), "int");
+  // addNewTrace(curproc -> pid, SYS_mknod, argsForTrace);
 
   return 0;
 }
@@ -473,9 +473,9 @@ sys_chdir(void)
     return -1;
   }
 
-  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
-  addNewArgTrace(argsForTrace, path, "char* ");
-  addNewTrace(curproc -> pid, SYS_chdir, argsForTrace);
+  // char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  // addNewArgTrace(argsForTrace, path, "char* ");
+  // addNewTrace(curproc -> pid, SYS_chdir, argsForTrace);
 
   ilock(ip);
   if(ip->type != T_DIR){
@@ -518,13 +518,13 @@ sys_exec(void)
     strconcat(execArgs, argv[i]);
   }
 
-  struct proc *curproc = myproc();
+  // struct proc *curproc = myproc();
 
-  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
-  addNewArgTrace(argsForTrace, path, "char*");
-  addNewArgTrace(argsForTrace, execArgs, "char**");
-  setProcessAlive(curproc -> pid);
-  addNewTrace(curproc -> pid, SYS_exec, argsForTrace);
+  // char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  // addNewArgTrace(argsForTrace, path, "char*");
+  // addNewArgTrace(argsForTrace, execArgs, "char**");
+  // setProcessAlive(curproc -> pid);
+  // addNewTrace(curproc -> pid, SYS_exec, argsForTrace);
 
   return exec(path, argv);
 }
@@ -537,10 +537,10 @@ sys_pipe(void)
   curproc->count++;
 
   argptr(0, (void*)&fd, 2*sizeof(fd[0]));
-  char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
-  char temp[128];
-  addNewArgTrace(argsForTrace, itoa_simple(temp, *fd), "int");
-  addNewTrace(curproc -> pid, SYS_pipe, argsForTrace);
+  // char argsForTrace[256]; strncpy(argsForTrace, " ", 2);
+  // char temp[128];
+  // addNewArgTrace(argsForTrace, itoa_simple(temp, *fd), "int");
+  // addNewTrace(curproc -> pid, SYS_pipe, argsForTrace);
   
   struct file *rf, *wf;
   int fd0, fd1;

@@ -45,3 +45,8 @@ SYSCALL(rwtest)
 SYSCALL(wrinit)
 SYSCALL(wrtest)
 
+SYSCALL(set_priority)
+SYSCALL(select_sched)
+SYSCALL(set_lottery_ticket)
+SYSCALL(set_sched_queue)
+SYSCALL(show_processes_scheduling)

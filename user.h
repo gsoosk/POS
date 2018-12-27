@@ -38,6 +38,14 @@ int rwinit(void);
 int rwtest(uint pattern);
 int wrinit(void);
 int wrtest(uint pattern);
+//part 4 : sched
+int select_sched(int sched);
+int set_priority(int p, int pid);
+int set_lottery_ticket(int l, int pid);
+int set_sched_queue(int q, int pid);
+int show_processes_scheduling();
+
+enum schedAlgorithms { ROUND_ROBIN , PRIORITY , FCFS , LOTTERY};
 
 // ulib.c
 int stat(const char*, struct stat*);
@@ -55,3 +63,6 @@ void free(void*);
 int atoi(const char*);
 char* itoa_simple_helper(char *dest, int i);
 char* itoa_simple(char *dest, int i);
+int int_size(int i);
+
+void delay(int numberOfClocks);

@@ -2,10 +2,10 @@ POS
 ======
 
 POS is an OS cloned from xv6 kernel.
-* [Part 1](#part-1-introduction-to-xv6)
-* [Part 2](#part-2-system-calls)
-* [Part 3](#part-3-synchronization-and-concurrency)
-* [Part4](#part-4-cpu-scheduling)
+* [Part 1 (Introduction to XV6)](#part-1-introduction-to-xv6)
+* [Part 2 (System Calls)](#part-2-system-calls)
+* [Part 3 (Synchronization And Concurrency)](#part-3-synchronization-and-concurrency)
+* [Part 4 (CPU Scheduling)](#part-4-cpu-scheduling)
 
 
 New Features 

@@ -76,11 +76,10 @@ int sys_shm_open()
   {
     if(shm_table.segments[i].id == 0)
     {
-      
       shm_table.segments[i].id = id;
       shm_table.segments[i].flags = flag;
-      shm_table.segments[i].ref_count = 1;
       shm_table.segments[i].owner = myproc()->pid;
+      shm_table.segments[i].size = page_count;
       for( j = 0 ; j < page_count; j++)
       {
         shm_table.segments[i].frames[j] = kalloc();
@@ -109,12 +108,16 @@ void *sys_shm_attach()
     {
       for( j = 0 ; j < shm_table.segments[i].size ; j++)
       {
-        if(myproc()->pid == shm_table.segments[i].owner ||(
-        (shm_table.segments[i].flags & ONLY_CHILD_CAN_ATTACH
-        && myproc()->parent->pid == shm_table.segments[i].owner) ||
-        (shm_table.segments[i].flags & ONLY_CHILD_CAN_ATTACH) == 0))
-        {
-          
+
+        int enter = 0;
+        if(myproc()->pid == shm_table.segments[i].owner )
+          enter = 1;
+        else if((shm_table.segments[i].flags & ONLY_CHILD_CAN_ATTACH) == 0)
+          enter = 1;
+        else if(myproc()->parent->pid == shm_table.segments[i].owner)
+          enter = 1;
+        if(enter)
+        { 
           int flag;
           if(myproc()->pid == shm_table.segments[i].owner)
             flag = PTE_W | PTE_U;
@@ -122,11 +125,14 @@ void *sys_shm_attach()
             flag = PTE_U;
           else
             flag = PTE_W | PTE_U;
+
           mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.segments[i].frames[j]), flag);
           shm_table.segments[i].ref_count++;
           myproc()->sz += PGSIZE;
           if(j == 0)
-            pointer = (void *) PGROUNDUP(myproc()->sz);  
+            pointer = (void *) PGROUNDUP(myproc()->sz); 
+             *((char*) PGROUNDUP(myproc()->sz)) = 'c';
+            cprintf("%c",   *((char*) PGROUNDUP(myproc()->sz)));
         }
         else
           cprintf("shm_attach error : only child can attach to this segment\n");
@@ -153,14 +159,13 @@ int sys_shm_close() {
       break;
     }      
   }
-  if(shm_table.segments[i].ref_count == 0)
-      shm_init_segment(i);
-
-  if(shm_table.segments[i].id != id) {
+   if(shm_table.segments[i].id != id) {
     cprintf("shm_close error: can not found segment with this id");   
     releaseticket(&(shm_table.lock));
     return -1;
   }
+  if(shm_table.segments[i].ref_count == 0)
+      shm_init_segment(i);
   releaseticket(&(shm_table.lock));
   return 0;
 }

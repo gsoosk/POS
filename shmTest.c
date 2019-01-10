@@ -4,7 +4,9 @@
 #include "user.h" // for using from strlen
 
 
-
+struct cnt {
+    int counter;
+} ;
 void simple_shm_test();
 int main(int argc, char *argv[]) 
 {
@@ -26,8 +28,10 @@ int main(int argc, char *argv[])
 void simple_shm_test()
 {
     int open = shm_open(1, 1, 0);
-    int* frame_counter = (int*) shm_attach(1);
-    *frame_counter = 0;
+    struct cnt* frame_counter =  shm_attach(1);
+     printf(1,"ok\n");
+    frame_counter->counter = 0;
+    printf(1,"nok\n");
     if(open < 0)
     {
         printf(1, "error : can not open\n");
@@ -36,13 +40,15 @@ void simple_shm_test()
     if(pid == 0)
     {
         wait();
-        printf(1, "counter increased to %d\n", (*frame_counter));
+        printf(1, "counter increased to %d\n", (frame_counter->counter));
         shm_close(1);
     }
     else
     {
-        int* child_frame_counter = (int*) shm_attach(1);
-        (*child_frame_counter) ++;
+        struct cnt* child_frame_counter = shm_attach(1);
+       
+        child_frame_counter->counter++;
+        
         shm_close(1);
     }
 }

@@ -34,6 +34,9 @@ syscall.h
 syscall.c
 sysproc.c
 
+# shared memory
+sharedm.c
+
 # file system
 buf.h
 sleeplock.h

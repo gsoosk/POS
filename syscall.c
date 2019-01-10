@@ -125,6 +125,11 @@ extern int sys_set_priority(void);
 extern int sys_set_lottery_ticket(void);
 extern int sys_set_sched_queue(void);
 extern int sys_show_processes_scheduling(void);
+//Part 5 : memory management
+extern int sys_shm_init(void);
+extern int sys_shm_open(void);
+extern int sys_shm_attach(void);
+extern int sys_shm_close(void);
 
 
 
@@ -169,9 +174,10 @@ static int (*syscalls[])(void) = {
 [SYS_set_lottery_ticket] sys_set_lottery_ticket,
 [SYS_set_sched_queue] sys_set_sched_queue,
 [SYS_show_processes_scheduling] sys_show_processes_scheduling,
-
-
-
+[SYS_shm_init] sys_shm_init,
+[SYS_shm_open] sys_shm_open,
+[SYS_shm_attach] sys_shm_attach,
+[SYS_shm_close] sys_shm_close,
 };
 
 void

@@ -41,4 +41,10 @@
 #define SYS_set_lottery_ticket 38
 #define SYS_set_sched_queue 39
 #define SYS_show_processes_scheduling 40
+//Part 4
+#define SYS_shm_init 41
+#define SYS_shm_open 42
+#define SYS_shm_attach 43
+#define SYS_shm_close 44
+
 

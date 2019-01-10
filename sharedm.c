@@ -95,11 +95,14 @@ void *sys_shm_attach(int id)
     {
       for( j = 0 ; j < shm_table.segments[i].size ; j++)
       {
-        if(shm_table.segments[i].flags & ONLY_CHILD_CAN_ATTACH
-          && myproc()->parent->pid == shm_table.segments[i].owner)
+        if(myproc()->pid == shm_table.segments[i].owner || 
+        (shm_table.segments[i].flags & ONLY_CHILD_CAN_ATTACH
+        && myproc()->parent->pid == shm_table.segments[i].owner))
         {
           int flag;
-          if(shm_table.segments[i].flags & ONLY_OWNER_WRITE)
+          if(myproc()->pid == shm_table.segments[i].owner)
+            flag = PTE_W | PTE_U;
+          else if(shm_table.segments[i].flags & ONLY_OWNER_WRITE)
             flag = PTE_U;
           else
             flag = PTE_W | PTE_U;

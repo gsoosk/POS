@@ -8,7 +8,7 @@
 #include "spinlock.h"
 #include "syscall.h"
 
-int scheduler_algorithm = LOTTERY;
+int scheduler_algorithm = ROUND_ROBIN;
 int process_number;
 
 struct {
@@ -647,40 +647,45 @@ show_all_processes_scheduling()
 void
 scheduler(void)
 {
-  struct proc *p;  
-  struct cpu *c = mycpu();
-  c->proc = 0;
-  for(;;){
-    // Enable interrupts on this processor.
-    sti();
-    // Loop over process table looking for process to run.
-    acquire(&ptable.lock);
-    p = lotterySched();
-    
-    if(p == 0)
-      p = FCFSSched();
-    if(p == 0)
-      p = prioritySched();
-    if(p !=0 ) {
-      // Switch to chosen process.  It is the process's job
-      // to release ptable.lock and then reacquire it
-      // before jumping back to us.
-      c->proc = p;
-      switchuvm(p);
-      p->state = RUNNING;
-
-      swtch(&(c->scheduler), p->context);
-      switchkvm();
-
-      // Process is done running for now.
-      // It should have changed its p->state before coming back.
-      c->proc = 0;
-    }
-
-    release(&ptable.lock);
+  if(scheduler_algorithm == ROUND_ROBIN)
+  {
+    roundRobinSched();
   }
+  else
+  {
+    struct proc *p;  
+    struct cpu *c = mycpu();
+    c->proc = 0;
+    for(;;){
+      // Enable interrupts on this processor.
+      sti();
+      // Loop over process table looking for process to run.
+      acquire(&ptable.lock);
+      p = lotterySched();
+      
+      if(p == 0)
+        p = FCFSSched();
+      if(p == 0)
+        p = prioritySched();
+      if(p !=0 ) {
+        // Switch to chosen process.  It is the process's job
+        // to release ptable.lock and then reacquire it
+        // before jumping back to us.
+        c->proc = p;
+        switchuvm(p);
+        p->state = RUNNING;
 
+        swtch(&(c->scheduler), p->context);
+        switchkvm();
 
+        // Process is done running for now.
+        // It should have changed its p->state before coming back.
+        c->proc = 0;
+      }
+
+      release(&ptable.lock);
+    }
+  }
 }
 
 // Enter scheduler.  Must hold only ptable.lock
@@ -693,6 +698,7 @@ scheduler(void)
 void
 sched(void)
 {
+  
   int intena;
   struct proc *p = myproc();
 
@@ -707,6 +713,8 @@ sched(void)
   intena = mycpu()->intena;
   swtch(&p->context, mycpu()->scheduler);
   mycpu()->intena = intena;
+  
+
 }
 
 // Give up the CPU for one scheduling round.

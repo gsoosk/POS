@@ -4,9 +4,12 @@
 #include "user.h" // for using from strlen
 
 
-struct cnt {
-    int counter;
-} ;
+
+
+struct shm_cnt {
+  int cnt;
+};
+
 void simple_shm_test();
 int main(int argc, char *argv[]) 
 {
@@ -27,28 +30,38 @@ int main(int argc, char *argv[])
 }
 void simple_shm_test()
 {
-    int open = shm_open(1, 1, 0);
-    struct cnt* frame_counter =  shm_attach(1);
-     printf(1,"ok\n");
-    frame_counter->counter = 0;
-    printf(1,"nok\n");
-    if(open < 0)
-    {
-        printf(1, "error : can not open\n");
-    }
+
+    struct shm_cnt *counter;
+    shm_open(1,(char **)&counter);
+    counter ->cnt = 0;
+    printf(1, "counter in parent %d\n", (counter->cnt));
+    
+    
+    // if(open < 0)
+    // {
+    //     printf(1, "error : can not open\n");
+    // }
     int pid = fork();
-    if(pid == 0)
+    if(pid > 0)
     {
-        wait();
-        printf(1, "counter increased to %d\n", (frame_counter->counter));
+       
+        printf(1, "b\n", (counter->cnt));
         shm_close(1);
     }
     else
-    {
-        struct cnt* child_frame_counter = shm_attach(1);
+    {   
+        int i, j;
+        for(i = 0 ; i < 10000; i++)
+        {
+            for(j = 0 ; j < 10000; j++)
+            {
+                
+            }
+        }
        
-        child_frame_counter->counter++;
-        
+        shm_attach(1, (char **)&counter);
+        counter->cnt++;
+         printf(1, "counter in child %d\n", (counter->cnt));
         shm_close(1);
     }
 }

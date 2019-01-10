@@ -95,19 +95,22 @@ void *sys_shm_attach(int id)
     {
       for( j = 0 ; j < shm_table.segments[i].size ; j++)
       {
-        if(shm_table.segments[i].flags & ONLY_CHILD_CAN_ATTACH)
+        if(shm_table.segments[i].flags & ONLY_CHILD_CAN_ATTACH
+          && myproc()->parent->pid == shm_table.segments[i].owner)
         {
-          if(myproc()->parent->pid == shm_table.segments[i].owner)
-          {
-            mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.segments[i].frames[j]), PTE_W|PTE_U);
-            shm_table.segments[i].ref_count++;
-            myproc()->sz += PGSIZE;
-            if(j == 0)
-            pointer = (char *) PGROUNDUP(myproc()->sz);
-          }
+          int flag;
+          if(shm_table.segments[i].flags & ONLY_OWNER_WRITE)
+            flag = PTE_U;
+          else
+            flag = PTE_W | PTE_U;
+          mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.segments[i].frames[j]), flag);
+          shm_table.segments[i].ref_count++;
+          myproc()->sz += PGSIZE;
+          if(j == 0)
+            pointer = (char *) PGROUNDUP(myproc()->sz);  
         }
         else
-          cprintf("shm_attach error : ")
+          cprintf("shm_attach error : only child can attach to this segment\n");
       } 
     }
   }

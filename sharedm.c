@@ -65,6 +65,7 @@ void* sys_shm_attach() {
         enter = 1;
       if(enter)
       { 
+        shm_table.shm_pages[i].refcnt++;
         int flag;
         if(myproc()->pid == shm_table.shm_pages[i].owner)
           flag = PTE_W | PTE_U;
@@ -75,15 +76,22 @@ void* sys_shm_attach() {
         for(j = 0 ; j < shm_table.shm_pages[i].size ; j++)
         {
           mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame[j]), flag);
-          shm_table.shm_pages[i].refcnt++;
+          
           shm_table.shm_pages[i].pointer[j] =(void *) PGROUNDUP(myproc()->sz);
           cprintf("%x %x\n", shm_table.shm_pages[i].pointer[j], shm_table.shm_pages[i].frame[j]);
           myproc()->sz += PGSIZE;
         }
         
         releaseticket(&(shm_table.lock));
+        return shm_table.shm_pages[i].pointer[0];
       }
-      return shm_table.shm_pages[i].pointer[0];
+      else
+      {
+        cprintf("shm_attach err : you can not attach to this shared memory");
+        releaseticket(&(shm_table.lock));
+        return pointer;
+      }
+      
     }
   }
    releaseticket(&(shm_table.lock));

@@ -44,10 +44,22 @@ void simple_shm_test()
     int pid = fork();
     if(pid > 0)
     {
+<<<<<<< HEAD
         shm_open(1,(char **)&counter);
         counter ->cnt = 10;
         printf(1, "counter value in parent is : %d\n", (counter->cnt));
         releasesleep_syscalls();
+=======
+       
+        shm_open(1,1, 0);
+        void *  tmp;
+        tmp = (void*) shm_attach(1);
+        counter =  (struct shm_cnt *) tmp ;
+        counter -> cnt = 10;
+        printf(1, "counter in p %x\n", (counter));
+        printf(1, "counter in parent %d\n", (counter->cnt));
+        printf(1, "b\n", (counter->cnt));
+>>>>>>> origin/l
         wait();
         shm_close(1);
     }

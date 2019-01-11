@@ -5,13 +5,13 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
-#include "spinlock.h"
+#include "ticketlock.h"
 #define SHARED_MEMS_SIZE 32
 #define ONLY_OWNER_WRITE  0x001
 #define ONLY_CHILD_CAN_ATTACH 0x002
 #define MAX_PAGES 10
 struct {
-  struct spinlock lock;
+  struct ticketlock lock;
   struct shm_page {
     uint id;
     int flags;
@@ -25,8 +25,8 @@ struct {
 
 void sys_shm_init() {
   int i, j;
-  initlock(&(shm_table.lock), "SHM lock");
-  acquire(&(shm_table.lock));
+  initticketlock(&(shm_table.lock), "SHM lock");
+  acquireticket(&(shm_table.lock));
   for (i = 0; i< SHARED_MEMS_SIZE; i++) {
     shm_table.shm_pages[i].id =0;
     for(j = 0 ; j < MAX_PAGES ; j++){
@@ -38,7 +38,7 @@ void sys_shm_init() {
     shm_table.shm_pages[i].flags = 0;
     shm_table.shm_pages[i].owner = 0;
   }
-  release(&(shm_table.lock));
+  releaseticket(&(shm_table.lock));
 }
 
 void* sys_shm_attach() {
@@ -49,14 +49,14 @@ void* sys_shm_attach() {
     return "";
 
   int i, j;
-  acquire(&(shm_table.lock));
+  acquireticket(&(shm_table.lock));
   for (i = 0; i< SHARED_MEMS_SIZE; i++) {
     if(shm_table.shm_pages[i].id == id) {
      
       int enter = 0;
       if(myproc()->pid == shm_table.shm_pages[i].owner )
       {
-        release(&(shm_table.lock));
+        releaseticket(&(shm_table.lock));
         return shm_table.shm_pages[i].pointer[0];
       }
       else if((shm_table.shm_pages[i].flags & ONLY_CHILD_CAN_ATTACH) == 0)
@@ -65,6 +65,7 @@ void* sys_shm_attach() {
         enter = 1;
       if(enter)
       { 
+        shm_table.shm_pages[i].refcnt++;
         int flag;
         if(myproc()->pid == shm_table.shm_pages[i].owner)
           flag = PTE_W | PTE_U;
@@ -75,18 +76,25 @@ void* sys_shm_attach() {
         for(j = 0 ; j < shm_table.shm_pages[i].size ; j++)
         {
           mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame[j]), flag);
-          shm_table.shm_pages[i].refcnt++;
+          
           shm_table.shm_pages[i].pointer[j] =(void *) PGROUNDUP(myproc()->sz);
           cprintf("%x %x\n", shm_table.shm_pages[i].pointer[j], shm_table.shm_pages[i].frame[j]);
           myproc()->sz += PGSIZE;
         }
         
-        release(&(shm_table.lock));
+        releaseticket(&(shm_table.lock));
+        return shm_table.shm_pages[i].pointer[0];
       }
-      return shm_table.shm_pages[i].pointer[0];
+      else
+      {
+        cprintf("shm_attach err : you can not attach to this shared memory");
+        releaseticket(&(shm_table.lock));
+        return pointer;
+      }
+      
     }
   }
-   release(&(shm_table.lock));
+   releaseticket(&(shm_table.lock));
    cprintf("shm_attach err : id not found\n");
   return pointer;
 }
@@ -101,7 +109,12 @@ int sys_shm_open() {
   if(argint(2, &flag) < 0)
     return -1;
  
-  acquire(&(shm_table.lock));
+  if(page_count < 1)
+  {
+    cprintf("shm_error : page count should be posetive\n");
+    return -1;
+  }
+  acquireticket(&(shm_table.lock));
   // Shared memory DNE
   for (i = 0; i < SHARED_MEMS_SIZE; ++i) {
     if(shm_table.shm_pages[i].id == 0) {
@@ -120,12 +133,13 @@ int sys_shm_open() {
         myproc()->sz += PGSIZE;
       }
       
-      release(&(shm_table.lock));
+      releaseticket(&(shm_table.lock));
       return 1;
     }
   }
-  release(&(shm_table.lock));
-  return 1;
+  cprintf("shm_error : shm table is full\n");
+  releaseticket(&(shm_table.lock));
+  return -1;
 }
 
 
@@ -134,8 +148,8 @@ int sys_shm_close() {
   if(argint(0, &id) < 0)
     return -1;
   int i, j;
-  initlock(&(shm_table.lock), "SHM lock");
-  acquire(&(shm_table.lock));
+  initticketlock(&(shm_table.lock), "SHM lock");
+  acquireticket(&(shm_table.lock));
   for (i = 0; i< SHARED_MEMS_SIZE; i++) {
     if(shm_table.shm_pages[i].id == id) {
       shm_table.shm_pages[i].refcnt--;
@@ -154,9 +168,9 @@ int sys_shm_close() {
     }
   }
   if(shm_table.shm_pages[i].id != id) { // shared memory item not found
-    release(&(shm_table.lock));
+    releaseticket(&(shm_table.lock));
     return 1;
   }
-  release(&(shm_table.lock));
+  releaseticket(&(shm_table.lock));
   return 0;
 }

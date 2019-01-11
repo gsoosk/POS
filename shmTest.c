@@ -43,7 +43,8 @@ void simple_shm_test()
     if(pid > 0)
     {
        
-       shm_open(1,(char **)&counter);
+        shm_open(1,1, 0);
+        counter =  (struct shm_cnt *) shm_attach(1);
         counter ->cnt = 10;
         printf(1, "counter in p %x\n", (counter));
         printf(1, "counter in parent %d\n", (counter->cnt));

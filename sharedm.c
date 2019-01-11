@@ -14,7 +14,8 @@ struct {
   struct shm_page {
     uint id;
     int flags;
-    char *frame;
+    void *frame;
+    void *pointer;
     int refcnt;
     int owner;
   } shm_pages[SHARED_MEMS_SIZE];
@@ -34,9 +35,9 @@ void sys_shm_init() {
   release(&(shm_table.lock));
 }
 
-char* sys_shm_attach() {
+void* sys_shm_attach() {
   int id;
-  char* pointer = 0;
+  void* pointer = 0;
 
   if(argint(0, &id) < 0)
     return "";
@@ -44,18 +45,20 @@ char* sys_shm_attach() {
   int i;
   acquire(&(shm_table.lock));
   for (i = 0; i< SHARED_MEMS_SIZE; i++) {
-     cprintf("attach %d %d\n", id, shm_table.shm_pages[i].id);
     if(shm_table.shm_pages[i].id == id) {
      
-      // int enter = 0;
-      // if(myproc()->pid == shm_table.shm_pages[i].owner )
-      //   enter = 1;
-      // else if((shm_table.shm_pages[i].flags & ONLY_CHILD_CAN_ATTACH) == 0)
-      //   enter = 1;
-      // else if(myproc()->parent->pid == shm_table.shm_pages[i].owner)
-      //   enter = 1;
-      // if(enter)
-      // { 
+      int enter = 0;
+      if(myproc()->pid == shm_table.shm_pages[i].owner )
+      {
+        release(&(shm_table.lock));
+        return shm_table.shm_pages[i].pointer;
+      }
+      else if((shm_table.shm_pages[i].flags & ONLY_CHILD_CAN_ATTACH) == 0)
+        enter = 1;
+      else if(myproc()->parent->pid == shm_table.shm_pages[i].owner)
+        enter = 1;
+      if(enter)
+      { 
         int flag;
         if(myproc()->pid == shm_table.shm_pages[i].owner)
           flag = PTE_W | PTE_U;
@@ -65,26 +68,29 @@ char* sys_shm_attach() {
           flag = PTE_W | PTE_U;
         mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame), flag);
         shm_table.shm_pages[i].refcnt++;
-        pointer=(char *) PGROUNDUP(myproc()->sz);
+        shm_table.shm_pages[i].pointer =(void *) PGROUNDUP(myproc()->sz);
+        cprintf("%x %x\n", shm_table.shm_pages[i].pointer, shm_table.shm_pages[i].frame);
         myproc()->sz += PGSIZE;
         release(&(shm_table.lock));
-        cprintf("attach\n");
-      // }
-      return pointer;
+      }
+      return shm_table.shm_pages[i].pointer;
     }
   }
    release(&(shm_table.lock));
+   cprintf("shm_attach err : id not found\n");
   return pointer;
 }
 
 int sys_shm_open() {
   int i;
-  int id;
-  char **pointer;
+  int id, page_count, flag;
   if(argint(0, &id) < 0)
     return -1;
-  if(argptr(1, (char **) (&pointer),4)<0)
+  if(argint(1, &page_count) < 0)
     return -1;
+  if(argint(2, &flag) < 0)
+    return -1;
+ 
   acquire(&(shm_table.lock));
   // Shared memory DNE
   for (i = 0; i < SHARED_MEMS_SIZE; ++i) {
@@ -93,17 +99,17 @@ int sys_shm_open() {
       shm_table.shm_pages[i].frame = kalloc();
       shm_table.shm_pages[i].refcnt = 1;
       shm_table.shm_pages[i].owner = myproc()->pid;
+      shm_table.shm_pages[i].flags = flag;
       memset(shm_table.shm_pages[i].frame, 0, PGSIZE);
       mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
-      *pointer=(char *) PGROUNDUP(myproc()->sz);
+      shm_table.shm_pages[i].pointer =(char *) PGROUNDUP(myproc()->sz);
       myproc()->sz += PGSIZE;
       release(&(shm_table.lock));
-      cprintf("open\n");
-      return 0;
+      return 1;
     }
   }
   release(&(shm_table.lock));
-  return 0;
+  return 1;
 }
 
 
@@ -117,6 +123,10 @@ int sys_shm_close() {
   for (i = 0; i< SHARED_MEMS_SIZE; i++) {
     if(shm_table.shm_pages[i].id == id) {
       shm_table.shm_pages[i].refcnt--;
+
+      if(myproc()->pid == shm_table.shm_pages[i].owner)
+        shm_table.shm_pages[i].flags = 0;
+      
       if(shm_table.shm_pages[i].refcnt > 0) break;
       shm_table.shm_pages[i].id = 0;
       shm_table.shm_pages[i].frame = 0;

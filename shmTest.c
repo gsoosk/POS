@@ -44,8 +44,10 @@ void simple_shm_test()
     {
        
         shm_open(1,1, 0);
-        counter =  (struct shm_cnt *) shm_attach(1);
-        counter ->cnt = 10;
+        void *  tmp;
+        tmp = (void*) shm_attach(1);
+        counter =  (struct shm_cnt *) tmp ;
+        counter -> cnt = 10;
         printf(1, "counter in p %x\n", (counter));
         printf(1, "counter in parent %d\n", (counter->cnt));
         printf(1, "b\n", (counter->cnt));

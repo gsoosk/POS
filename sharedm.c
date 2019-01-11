@@ -34,27 +34,28 @@ void sys_shm_init() {
   release(&(shm_table.lock));
 }
 
-int sys_shm_attach() {
+char* sys_shm_attach() {
   int id;
-  char **pointer;
+  char* pointer = 0;
+
   if(argint(0, &id) < 0)
-    return -1;
-  if(argptr(1, (char **) (&pointer),4)<0)
-    return -1;
+    return "";
 
   int i;
   acquire(&(shm_table.lock));
   for (i = 0; i< SHARED_MEMS_SIZE; i++) {
+     cprintf("attach %d %d\n", id, shm_table.shm_pages[i].id);
     if(shm_table.shm_pages[i].id == id) {
-      int enter = 0;
-      if(myproc()->pid == shm_table.shm_pages[i].owner )
-        enter = 1;
-      else if((shm_table.shm_pages[i].flags & ONLY_CHILD_CAN_ATTACH) == 0)
-        enter = 1;
-      else if(myproc()->parent->pid == shm_table.shm_pages[i].owner)
-        enter = 1;
-      if(enter)
-      { 
+     
+      // int enter = 0;
+      // if(myproc()->pid == shm_table.shm_pages[i].owner )
+      //   enter = 1;
+      // else if((shm_table.shm_pages[i].flags & ONLY_CHILD_CAN_ATTACH) == 0)
+      //   enter = 1;
+      // else if(myproc()->parent->pid == shm_table.shm_pages[i].owner)
+      //   enter = 1;
+      // if(enter)
+      // { 
         int flag;
         if(myproc()->pid == shm_table.shm_pages[i].owner)
           flag = PTE_W | PTE_U;
@@ -64,16 +65,16 @@ int sys_shm_attach() {
           flag = PTE_W | PTE_U;
         mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame), flag);
         shm_table.shm_pages[i].refcnt++;
-        *pointer=(char *) PGROUNDUP(myproc()->sz);
+        pointer=(char *) PGROUNDUP(myproc()->sz);
         myproc()->sz += PGSIZE;
         release(&(shm_table.lock));
         cprintf("attach\n");
       // }
-      return 0;
+      return pointer;
     }
   }
    release(&(shm_table.lock));
-  return 1;
+  return pointer;
 }
 
 int sys_shm_open() {

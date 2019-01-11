@@ -47,7 +47,7 @@ int show_processes_scheduling();
 //part 5 : memory management
 int shm_init(void);
 int shm_open(int id, char **pointer);
-int shm_attach(int id, char **pointer);
+char* shm_attach(int id);
 int shm_close(int id);
 
 enum schedAlgorithms { ROUND_ROBIN , PRIORITY , FCFS , LOTTERY};

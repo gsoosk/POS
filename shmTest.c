@@ -45,6 +45,7 @@ void simple_shm_test()
     if(pid > 0)
     {
         shm_open(1, 1, 0);
+        counter =  (struct shm_cnt *) shm_attach(1);
         counter ->cnt = 10;
         printf(1, "counter value in parent is : %d\n", (counter->cnt));
         releasesleep_syscalls();

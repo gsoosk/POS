@@ -13,17 +13,19 @@ struct shm_cnt {
 void simple_shm_test();
 int main(int argc, char *argv[]) 
 {
-    shm_init();
-    printf(1, "What test do you want to run ? \n");
-    printf(1, "1.shared memory between two proccess. simple\n");
+    while(1) {
+        shm_init();
+        printf(1, "What test do you want to run ? \n");
+        printf(1, "1.shared memory between two proccess. simple\n");
 
-  
+    
 
-    char buf[1024];
-    read(1, buf, 1024);
-    if(atoi(buf) == 1)
-    {   
-        simple_shm_test();
+        char buf[1024];
+        read(1, buf, 1024);
+        if(atoi(buf) == 1)
+        {   
+            simple_shm_test();
+        }
     }
     
     exit();

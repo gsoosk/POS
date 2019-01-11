@@ -11,6 +11,8 @@ struct shm_cnt {
 };
 
 void simple_shm_test();
+void shm_write_flag_test();
+
 int main(int argc, char *argv[]) 
 {
     while(1) {
@@ -29,7 +31,7 @@ int main(int argc, char *argv[])
             simple_shm_test();
         }
         else if(atoi(buf) == 2) {
-            // shm_write_flag_test();
+            shm_write_flag_test();
         }
     }
     
@@ -71,7 +73,8 @@ void shm_write_flag_test() {
     int pid = fork();
     if(pid > 0)
     {
-        shm_open(1, 1, 0);
+        shm_open(1, 1, ONLY_OWNER_WRITE);
+        counter =  (struct shm_cnt *) shm_attach(1);
         counter ->cnt = 10;
         printf(1, "counter value in parent is : %d\n", (counter->cnt));
         releasesleep_syscalls();
@@ -82,8 +85,9 @@ void shm_write_flag_test() {
     {   
         acquiresleep_syscalls();
         counter =  (struct shm_cnt *) shm_attach(1);
+        printf(1, "counter value in child is : %d\n", (counter->cnt));
         counter->cnt++;
-        printf(1, "counter value increased in child\n");
+        printf(1, "counter value could not increased in child\n");
         printf(1, "counter value in child is : %d\n", (counter->cnt));
         shm_close(1);
         releasesleep_syscalls();

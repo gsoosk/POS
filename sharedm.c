@@ -87,7 +87,7 @@ void* sys_shm_attach() {
       }
       else
       {
-        cprintf("shm_attach err : you can not attach to this shared memory");
+        cprintf("shm_attach err : you can not attach to this shared memory\n");
         releaseticket(&(shm_table.lock));
         return pointer;
       }

@@ -57,7 +57,7 @@ void simple_shm_test()
         counter =  (struct shm_cnt *) shm_attach(1);
         counter->cnt++;
         printf(1, "counter value increased in child\n");
-        printf(1, "counter value in parent is : %d\n", (counter->cnt));
+        printf(1, "counter value in child is : %d\n", (counter->cnt));
         shm_close(1);
         releasesleep_syscalls();
     }

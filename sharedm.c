@@ -13,6 +13,7 @@
 struct {
   struct ticketlock lock;
   struct shm_page {
+    uint firstSize;
     uint id;
     int flags;
     void *frame[10];
@@ -41,12 +42,11 @@ void sys_shm_init() {
   releaseticket(&(shm_table.lock));
 }
 
-void* sys_shm_attach() {
-  int id;
-  void* pointer = 0;
 
-  if(argint(0, &id) < 0)
-    return "";
+
+void* attach(int id, struct proc* process) {
+  
+  void* pointer = 0;
 
   int i, j;
   acquireticket(&(shm_table.lock));
@@ -54,33 +54,46 @@ void* sys_shm_attach() {
     if(shm_table.shm_pages[i].id == id) {
      
       int enter = 0;
-      if(myproc()->pid == shm_table.shm_pages[i].owner )
+      if(process->pid == shm_table.shm_pages[i].owner )
       {
-        releaseticket(&(shm_table.lock));
-        return shm_table.shm_pages[i].pointer[0];
+        // releaseticket(&(shm_table.lock));
+        // return shm_table.shm_pages[i].pointer[0];
+        enter = 1;
       }
       else if((shm_table.shm_pages[i].flags & ONLY_CHILD_CAN_ATTACH) == 0)
         enter = 1;
-      else if(myproc()->parent->pid == shm_table.shm_pages[i].owner)
+      else if(process->parent->pid == shm_table.shm_pages[i].owner)
         enter = 1;
       if(enter)
       { 
+        
         shm_table.shm_pages[i].refcnt++;
         int flag;
-        if(myproc()->pid == shm_table.shm_pages[i].owner)
+        if(process->pid == shm_table.shm_pages[i].owner)
           flag = PTE_W | PTE_U;
         else if(shm_table.shm_pages[i].flags & ONLY_OWNER_WRITE)
           flag = PTE_U;
         else
           flag = PTE_W | PTE_U;
-        for(j = 0 ; j < shm_table.shm_pages[i].size ; j++)
+
+        if(process -> pid == myproc() -> pid)
         {
-          mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame[j]), flag);
+          process->id[process->filledId] = id;
+          process->filledId++;
           
-          shm_table.shm_pages[i].pointer[j] =(void *) PGROUNDUP(myproc()->sz);
-          cprintf("%x %x\n", shm_table.shm_pages[i].pointer[j], shm_table.shm_pages[i].frame[j]);
-          myproc()->sz += PGSIZE;
         }
+        
+          for(j = 0 ; j < shm_table.shm_pages[i].size ; j++)
+          {
+          mappages(process->pgdir, (void*) PGROUNDUP(process->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame[j]), flag);
+          shm_table.shm_pages[i].pointer[j] =(void *) PGROUNDUP(process->sz);
+          process->pointer[process->filledPointer] = process->sz; 
+          process->physical[process->filledPointer] = shm_table.shm_pages[i].frame[j];
+          process->filledPointer ++;
+          process->sz += PGSIZE;
+          } 
+          cprintf("\n\n");
+        
         
         releaseticket(&(shm_table.lock));
         return shm_table.shm_pages[i].pointer[0];
@@ -90,13 +103,24 @@ void* sys_shm_attach() {
         cprintf("shm_attach err : you can not attach to this shared memory\n");
         releaseticket(&(shm_table.lock));
         return pointer;
-      }
+      } 
       
     }
   }
    releaseticket(&(shm_table.lock));
    cprintf("shm_attach err : id not found\n");
   return pointer;
+}
+void* sys_shm_attach()
+{
+  int id;
+  if(argint(0, &id) < 0)
+    return "";
+  return attach(id, myproc());
+}
+void increfcnt(int id)
+{
+  shm_table.shm_pages[id].refcnt ++;
 }
 
 int sys_shm_open() {
@@ -123,14 +147,14 @@ int sys_shm_open() {
       shm_table.shm_pages[i].owner = myproc()->pid;
       shm_table.shm_pages[i].flags = flag;
       shm_table.shm_pages[i].size = page_count;
-
       for(j = 0 ; j < shm_table.shm_pages[i].size ; j++)
       {
         shm_table.shm_pages[i].frame[j] = kalloc();
         memset(shm_table.shm_pages[i].frame[j], 0, PGSIZE);
-        mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame[j]), PTE_W|PTE_U);
-        shm_table.shm_pages[i].pointer[j] =(void *) PGROUNDUP(myproc()->sz);
-        myproc()->sz += PGSIZE;
+
+        // mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame[j]), PTE_W|PTE_U);
+        // shm_table.shm_pages[i].pointer[j] =(void *) PGROUNDUP(myproc()->sz);
+        // myproc()->sz += PGSIZE;
       }
       
       releaseticket(&(shm_table.lock));

@@ -122,6 +122,8 @@ found:
   process_number++;
   p->lottery_ticket = 50;
   p->schedQueue = LOTTERY;
+  p->filledPointer = 0;
+  p->filledId = 0;
   return p;
 }
 
@@ -231,6 +233,10 @@ fork(void)
   np->count++;
   curproc->count++;
 
+  for(i = 0 ; i < myproc()->filledId ; i++)
+  {
+    increfcnt(myproc()->id[i]); 
+  }
   return pid;
 }
 

@@ -133,6 +133,10 @@ void            find_and_set_priority(int priority, int pid);
 void            find_and_set_lottery_ticket(int lottery_ticket , int pid);
 void            find_and_set_sched_queue(int qeue_number, int pid);
 void            show_all_processes_scheduling();
+void*           attach(int id, struct proc* process) ;
+void            increfcnt(int id);
+
+
 
 extern int      process_number;
 extern int      scheduler_algorithm;

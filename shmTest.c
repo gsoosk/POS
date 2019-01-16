@@ -1,6 +1,6 @@
 #include "types.h"
-#include "stat.h"
-#include "fcntl.h" // for using file defines
+// #include "stat.h"
+// #include "fcntl.h" // for using file defines
 #include "user.h" // for using from strlen
 
 #define ONLY_OWNER_WRITE  0x001
@@ -14,6 +14,7 @@ void simple_shm_test();
 void shm_write_flag_test();
 void shm_child_attach_flag_test();
 void shm_more_than_one_page_test();
+void test();
 
 int main(int argc, char *argv[]) 
 {
@@ -24,6 +25,7 @@ int main(int argc, char *argv[])
         printf(1, "2.shared memory with ONLY_OWNER_WRITE flag\n");
         printf(1, "3.shared memory with ONLY_CHILD_CAN_ATTACH flag\n");
         printf(1, "4.shared memory with more than one page\n");
+        printf(1, "5.shared memory open and attach in parrent. simple\n");
     
         char buf[1024];
         read(1, buf, 1024);
@@ -35,6 +37,8 @@ int main(int argc, char *argv[])
             shm_child_attach_flag_test();
         else if(atoi(buf) == 4)
             shm_more_than_one_page_test();
+        else if(atoi(buf) == 5)
+            test();
     }
     
     exit();
@@ -166,6 +170,34 @@ void shm_more_than_one_page_test() {
             printf(1, "counter value %d increased in child\n", i);
             printf(1, "counter value %d in child is : %d\n", i, ((counter + i)->cnt));
         }
+        shm_close(1);
+        releasesleep_syscalls();
+    }
+}
+void test()
+{
+    struct shm_cnt *counter;
+    
+   
+    int pid = fork();
+    shm_open(1, 1, 0);
+    counter =  (struct shm_cnt *) shm_attach(1);
+
+    if(pid > 0)
+    {
+        acquiresleep_syscalls();
+        counter ->cnt = 10;
+        printf(1, "counter value in parent is : %d\n", (counter->cnt));
+        releasesleep_syscalls();
+        wait();
+        shm_close(1);
+    }
+    else
+    {   
+        acquiresleep_syscalls();
+        counter->cnt++;
+        printf(1, "counter value increased in child\n");
+        printf(1, "counter value in child is : %d\n", (counter->cnt));
         shm_close(1);
         releasesleep_syscalls();
     }

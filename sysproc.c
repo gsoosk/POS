@@ -219,16 +219,16 @@ sys_get_count(void)
 
 void sys_acquiresleep_syscalls(void)
 {
-  lock.lk.locked = 0;
-  lock.locked = 0;
-  lock.pid = myproc()->pid;
+  // lock.lk.locked = 0;
+  // lock.locked = 0;
+  // lock.pid = myproc()->pid;
   acquiresleep(&lock);
-  cprintf("lock is now acquire by parent, pid : %d\n", myproc()->pid);
+  // cprintf("lock is now acquire by parent, pid : %d\n", myproc()->pid);
 }
 
 void sys_releasesleep_syscalls(void)
 {
-  newreleasesleep(&lock);
+  releasesleep(&lock);
 }
 
 void sys_ticketlockinit(void)

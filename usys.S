@@ -50,3 +50,8 @@ SYSCALL(select_sched)
 SYSCALL(set_lottery_ticket)
 SYSCALL(set_sched_queue)
 SYSCALL(show_processes_scheduling)
+
+SYSCALL(shm_init)
+SYSCALL(shm_open)
+SYSCALL(shm_attach)
+SYSCALL(shm_close)

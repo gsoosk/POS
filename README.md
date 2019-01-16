@@ -2,10 +2,14 @@ POS
 ======
 
 POS is an OS cloned from xv6 kernel.
-* [Part 1 (Introduction to XV6)](#part-1-introduction-to-xv6)
-* [Part 2 (System Calls)](#part-2-system-calls)
-* [Part 3 (Synchronization And Concurrency)](#part-3-synchronization-and-concurrency)
-* [Part 4 (CPU Scheduling)](#part-4-cpu-scheduling)
+- [POS](#pos)
+	- [New Features](#new-features)
+		- [Part 1 (Introduction to XV6):](#part-1-introduction-to-xv6)
+		- [Part 2 (System Calls) :](#part-2-system-calls)
+		- [Part 3 (Synchronization And Concurrency):](#part-3-synchronization-and-concurrency)
+		- [Part 4 (CPU Scheduling):](#part-4-cpu-scheduling)
+		- [Part 5 (Memory Management):](#part-5-memory-management)
+	- [How to use?](#how-to-use)
 
 
 New Features 
@@ -42,7 +46,7 @@ New Features
 	* 5 CPU bound processs in Lottery scheduler queue
 	* 5 CPU bound process in FCFS scheduler queue
 	* 5 IO bound process in Priority scheduler queue
-
+### Part 5 (Memory Management):
 How to use? 
 ------
 

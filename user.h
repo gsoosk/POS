@@ -44,6 +44,11 @@ int set_priority(int p, int pid);
 int set_lottery_ticket(int l, int pid);
 int set_sched_queue(int q, int pid);
 int show_processes_scheduling();
+//part 5 : memory management
+int shm_init(void);
+int shm_open(int id, int page_count, int flags);
+void* shm_attach(int id);
+int shm_close(int id);
 
 enum schedAlgorithms { ROUND_ROBIN , PRIORITY , FCFS , LOTTERY};
 

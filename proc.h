@@ -1,3 +1,4 @@
+#define MAX_POINTER 100
 // Per-CPU state
 struct cpu {
   uchar apicid;                // Local APIC ID
@@ -55,6 +56,11 @@ struct proc {
   int lottery_ticket;
   int schedQueue;
   int process_count;
+  uint pointer[MAX_POINTER];
+  void* physical[MAX_POINTER];
+  int id[MAX_POINTER];
+  int filledPointer;
+  int filledId;
 };
 
 // Process memory is laid out contiguously, low addresses first:

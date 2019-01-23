@@ -1,7 +1,8 @@
 POS
 ======
 
-POS is an OS cloned from xv6 kernel.
+POS is an OS cloned from [xv6 kernel](https://github.com/mit-pdos/xv6-public) with some new features . xv6 is a re-implementation of Dennis Ritchie's and Ken Thompson's Unix
+Version 6 (v6). 
 - [POS](#pos)
 	- [New Features](#new-features)
 		- [Part 1 (Introduction to XV6):](#part-1-introduction-to-xv6)

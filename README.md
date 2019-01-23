@@ -47,6 +47,16 @@ New Features
 	* 5 CPU bound process in FCFS scheduler queue
 	* 5 IO bound process in Priority scheduler queue
 ### Part 5 (Memory Management):
+* adding new system calls to support share memory between processes.
+	* `sys_shm_init()` : to init all shared memories. it should used at first.
+	* `sys_shm_open(int id, int page_cnt, int flags)` : first of all a process should open a shared memory. 
+		* `id` is an unique number for every shared memory and we will use this to access shared mem.
+		* `page_cnt` is size of shared memory. ( shared memory will be an array )
+		* `flags` could be ONLY_OWNER_WRITE and ONLY_CHILD_CAN_ATTACH
+	* `sys_shm_attach(int id)` : after opening a shared memory processes should use this systemcall to access shared memory. this sys call returns pointer to first cell of shared memory.
+	* `sys_shm_close(int id)` : every process should close shared memory after using it with this syscall.
+* adding a user program named `shmTest` to test some senarios of shared memory.
+
 How to use? 
 ------
 
